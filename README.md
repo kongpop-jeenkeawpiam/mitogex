@@ -1,6 +1,6 @@
-# 🧬 Mitochondrial Genome Exploration
+# 🧬 Mitochondrial Genome Exploration (MitoGEx)
 
-### Computational Insights and Genomic Characterization through Programming Techniques
+### Mitochondrial Genome Exploration: Computational Insights and Genomic Characterization through Programming Techniques
 
 Welcome to our platform dedicated to mitochondrial genome analysis.  
 Explore **MitoGEx** — a powerful and user-friendly tool designed for comprehensive mtDNA analysis, including quality control, alignment, variant calling, annotation, haplogroup classification, and phylogenetic visualization, all in one pipeline.
