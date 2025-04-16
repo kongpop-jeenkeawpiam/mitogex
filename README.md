@@ -69,7 +69,7 @@ MitoGEx automates sequencing data analysis using:
 
 ## 💻 System Requirements
 
-- **OS**: Linux (tested on Ubuntu 24.04)  
+- **OS**: Linux (tested on Ubuntu 22.04)  
 - **CPU**: 4 Core minimum  
 - **RAM**: 8 GB minimum  
 - **Disk Space**: ≥15 GB  
