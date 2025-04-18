@@ -21,7 +21,7 @@ Supports **WGS** and **WES**.
 ---
 
 ## ⚙️ How does it work?
-![Alt text](https://mitogex.com/img/pipeline.png")
+![MitoGEx Pipeline](https://mitogex.com/img/pipeline.png")
 MitoGEx automates sequencing data analysis using:
 - FastQC
 - BWA
