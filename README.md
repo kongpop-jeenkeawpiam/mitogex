@@ -84,12 +84,6 @@ MitoGEx automates sequencing data analysis using:
 **Email**: kongpop.je@gmail.com
 
 ---
-
-## 📄 Publications
-
-- [Smith et al., 2023 - Genome Biology](#)
-- [Doe et al., 2024 - Bioinformatics](#)
-
 ---
 
 ## 💰 Funding
