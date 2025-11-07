@@ -1,9 +1,9 @@
 # 🧬 Mitochondrial Genome Exploration (MitoGEx)
 
-### Mitochondrial Genome Exploration: Computational Insights and Genomic Characterization through Programming Techniques
+### Mitochondrial Genome Explorer: A User-Friendly Computational Pipeline for Comprehensive Mitochondrial Genome Analysis
 
 Welcome to our platform dedicated to mitochondrial genome analysis.  
-Explore **MitoGEx** — a powerful and user-friendly tool designed for comprehensive mtDNA analysis, including quality control, alignment, variant calling, annotation, haplogroup classification, and phylogenetic visualization, all in one pipeline.
+**MitoGEx** is a user-friendly tool designed for comprehensive mtDNA analysis, including quality control, alignment, variant calling, annotation, haplogroup classification, and phylogenetic visualization, all in one pipeline.
 
 ---
 
@@ -13,9 +13,11 @@ Explore **MitoGEx** — a powerful and user-friendly tool designed for comprehen
 It integrates:
 - Quality control
 - Alignment
+- Alignment Quality
 - Variant calling
 - Annotation
-- Visualization  
+- Visualization
+  
 Supports **WGS** and **WES**.
 
 ---
@@ -23,19 +25,31 @@ Supports **WGS** and **WES**.
 ## ⚙️ How does it work?
 ![MitoGEx Pipeline](https://mitogex.com/img/pipeline.png)
 MitoGEx automates sequencing data analysis using:
-- FastQC
+- FastQC, Fastp
 - BWA
-- GATK
-- Qualimap
-- HaploGrep
+- GATK Mutect2 (Mitochondrial mode)
+- Qualimap 2
+- HaploGrep 3
+- IQ-TREE 2, Phylocanvas.gl, ETEToolkit
 
 **Output includes:**
-- QC summaries
+- QC report
 - VCFs
 - Annotated variants
 - Haplogroup classifications
 - Phylogenetic trees
 
+---
+## 🚀 Installation Guide
+To get started with **MitoGEx**, make sure you have **Miniconda** (or Anaconda) installed on your system.  
+Then, simply run the installation script provided in the repository:
+```bash
+source install.sh
+```
+Once the installation is complete, you can launch MitoGEx using:
+```bash
+source run.sh
+```
 ---
 
 ## 🚀 Features
@@ -48,24 +62,6 @@ MitoGEx automates sequencing data analysis using:
 
 ---
 
-## 📥 Download
-
-- [Latest release (Linux)](#)
-- [Development snapshots](#)
-- [GitHub repository](https://github.com/kongpop-jeenkeawpiam/mitogex)
-
----
-
-## 📚 Documentation
-
-- [Online User Manual](#)
-- [Sample input & output](#)
-- Tool links:
-  - FastQC
-  - BWA
-  - SAMtools
-
----
 
 ## 💻 System Requirements
 
@@ -79,8 +75,7 @@ MitoGEx automates sequencing data analysis using:
 
 ## 📬 Contact
 
-**Team**: Kongpop Jeenkeawpiam, Komwit Surachat, Pemikar Srifa, hGATc Team  
-**Leader**: Dr. Surasak Sangkhathat  
+**Team**: Kongpop Jeenkeawpiam, Surasak Sangkhathat, Pemikar Srifa, hGATC Team    
 **Email**: kongpop.je@gmail.com
 
 ---
@@ -92,4 +87,3 @@ This research was supported by the **Graduate Scholarship from the Faculty of Me
 
 ---
 
-© 2025 Mitochondrial Genome Research Project
