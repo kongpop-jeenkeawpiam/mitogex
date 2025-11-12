@@ -40,7 +40,11 @@ MitoGEx automates sequencing data analysis using:
 
 ---
 ## 🚀 Installation Guide
-To get started with **MitoGEx**, make sure you have **Miniconda** (or Anaconda) installed on your system.  
+To get started with **MitoGEx**, make sure you have **Miniconda** (or Anaconda) installed on your system. 
+```bash
+git clone https://github.com/kongpop-jeenkeawpiam/mitogex.git
+cd mitogex
+```
 Then, simply run the installation script provided in the repository:
 ```bash
 source install.sh
