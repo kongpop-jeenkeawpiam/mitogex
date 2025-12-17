@@ -1,0 +1,32 @@
+name: mitogex_ete
+channels:
+  - etetoolkit
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.6.15
+  
+  # ETE Toolkit & Dependencies
+  - ete3=3.1.3
+  - ete_toolchain=3.0.0
+  - slr=1.4.3
+  
+  # Phylogenetic Tools (Installed via ete_toolchain/etetoolkit channel)
+  - raxml=8.2.11
+  - phyml=20160115.patched
+  - iqtree=1.5.5
+  - mafft=6.861
+  - muscle=3.8.31
+  - paml=4.8
+  - trimal=1.4
+  - fasttree=2.1
+  - clustalo=1.2.4
+  - kalign=2.03
+  
+  # Graphics & System
+  - pyqt=5.12.3
+  - qt=5.12.9
+  - numpy=1.19.5
+  - libpng
+  - freetype
+  - six

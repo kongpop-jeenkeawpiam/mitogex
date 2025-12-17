@@ -17,36 +17,16 @@ sudo apt install -y r-base-core
 #Conda environment
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-conda config --add channels bioconda
-conda config --add channels conda-forge
-conda config --add channels etetoolkit
-conda config --set channel_priority strict
-conda create -y --name mitogex_ete
-conda create -y --name mitogex python=3.11
+
+# Create environments from YAML files
+conda env create -f mitogex_ete.yml
+conda env create -f mitogex.yml
+
 conda init bash
+
 conda activate mitogex_ete
-conda install -y -c etetoolkit ete3 ete_toolchain
-conda install -y -c conda-forge libstdcxx-ng
-conda install -n mitogex_ete -c etetoolkit slr
 ete3 build check
 conda activate mitogex
-
-#Install with conda packages
-conda install -y conda-forge::openjdk=21
-conda install -y bioconda::fastqc
-conda install -y bioconda::fastp
-conda install -y bioconda::qualimap
-conda install -y conda-forge::r-ragg
-conda install -y bioconda::samtools
-conda install -y bioconda::bwa
-conda install -y -n mitogex -c conda-forge zlib libxml2 r-base r-xml2 r-haven r-rvest r-dtplyr r-tidyverse r-remotes
-#conda install -y -n mitogex -c bioconda bioconductor-repitools || true
-
-#Install with pip
-pip install multiqc
-pip install https://github.com/etetoolkit/ete/archive/ete4.zip
-pip install PyQt6
-pip install packaging
 
 #Install packages
 sudo apt install -y curl

@@ -1,0 +1,50 @@
+name: mitogex
+channels:
+  - bioconda
+  - conda-forge
+  - etetoolkit
+  - defaults
+dependencies:
+  # Core
+  - python=3.11.14
+  - pip=25.2
+  - openjdk=21.0.9
+  - jq=1.8.1
+  - make=4.4.1
+  - curl=8.17.0
+
+  # Bioinformatics Tools
+  - fastqc=0.12.1
+  - fastp=1.0.1
+  - qualimap=2.3
+  - samtools=1.22.1
+  - bwa=0.7.19
+  - htslib=1.22.1
+
+  # R & Bioconductor (Managed by Conda)
+  - r-base=4.4.3
+  - r-tidyverse=2.0.0
+  - r-data.table=1.17.8
+  - r-xml2=1.4.1
+  - r-haven=2.5.5
+  - r-rvest=1.0.5
+  - r-remotes=2.5.0
+  - r-dtplyr=1.3.2
+  - r-ragg=1.5.0
+
+  # System Libs (required for R/Bioinformatics compilation)
+  - zlib=1.3.1
+  - libxml2=2.15.1
+  - libdeflate=1.25
+  - ncurses=6.5
+  - openssl=3.5.4
+
+  # Pip packages
+  - pip:
+    - multiqc==1.32
+    - PyQt6==6.10.0
+    - packaging==25.0
+    - numpy==2.3.4
+    - scipy==1.16.3
+    - pandas
+    - https://github.com/etetoolkit/ete/archive/ete4.zip
