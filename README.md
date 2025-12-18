@@ -68,7 +68,7 @@ source run.sh
 
 ## 💻 System Requirements
 
-- **OS**: Linux (tested on Ubuntu 22.04)  
+- **OS**: Linux (tested on Ubuntu 22.04) and Windows (WSLg: Windows Subsystem for Linux GUI) 
 - **CPU**: 4 Core minimum  
 - **RAM**: 8 GB minimum  
 - **Disk Space**: ≥15 GB  
