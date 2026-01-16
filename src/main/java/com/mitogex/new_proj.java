@@ -990,18 +990,19 @@ public class new_proj extends javax.swing.JFrame {
     }
 
     private void executeTool() throws IOException {
-        String fastpThreshold = fastpQualityField.getText().trim().isEmpty() 
-                ? "15" : fastpQualityField.getText().trim();
-String fastpCoreValue = fastpCore.getText().trim().isEmpty() 
-                ? "4" : fastpCore.getText().trim();
-String fastpUnqualifiedValue = fastpUnqualified_base.getText().trim().isEmpty() 
-                ? "40" : fastpUnqualified_base.getText().trim();
-String fastpReadLengthValue = fastpReadLengthField.getText().trim().isEmpty() 
-                ? "15" : fastpReadLengthField.getText().trim();
-String bwaThreadsValue = bwaThreadsField.getText().trim().isEmpty() 
-                ? "4" : bwaThreadsField.getText().trim();  // Get threads for BWA
-String bwaMinimumScoreValue = bwaMinimumScore.getText().trim().isEmpty() 
-                ? "30" : bwaMinimumScore.getText().trim();
+         // Retrieve the user inputs from text fields and check for null values
+        String fastpThreshold = (fastpQualityField.getText().trim().isEmpty())
+                ? fastpQualityField.getText().trim() : "15";
+        String fastpCoreValue = (fastpCore.getText().trim().isEmpty())
+                ? fastpCore.getText().trim() : "4";
+        String fastpUnqualifiedValue = (fastpUnqualified_base.getText().trim().isEmpty())
+                ? fastpUnqualified_base.getText().trim() : "40";
+        String fastpReadLengthValue = (fastpReadLengthField.getText().trim().isEmpty())
+                ? fastpReadLengthField.getText().trim() : "15";
+        String bwaThreadsValue = (bwaThreadsField.getText().trim().isEmpty())
+                ? bwaThreadsField.getText().trim() : "4";  // Get threads for BWA
+        String bwaMinimumScoreValue = (bwaMinimumScore.getText().trim().isEmpty())
+                ? bwaMinimumScore.getText().trim() : "30";
 
         
        
