@@ -14,14 +14,19 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,10 +39,15 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -46,15 +56,46 @@ import javax.swing.JScrollPane;
 
 public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
 
+    private final JFXPanel fxPanel = new JFXPanel();   // one per application
+private WebView  webView;                          // created on the FX thread
+private WebEngine webEngine;
+    private String pendingUrl = null;
     /**
      * Creates new form main
      */
     public Main_windows() {
         initComponents();
+        initBrowser();
         populateComboBoxWithDirectories();
         setLocationRelativeTo(null);
     }
 
+    // Call this once, e.g. in the constructor *after* initComponents()
+private void initBrowser() {
+     ensureJavaFXIsInitialized();
+
+        // place JFXPanel once
+        jPanel3.setLayout(new BorderLayout());
+        jPanel3.add(fxPanel, BorderLayout.CENTER);
+
+        // build scene on FX thread
+        Platform.runLater(() -> {
+            webView   = new WebView();
+            webEngine = webView.getEngine();
+            fxPanel.setScene(new Scene(webView));
+
+            // flush any early pending page
+            if (pendingUrl != null) {
+                webEngine.load(pendingUrl);
+                pendingUrl = null;
+            }else {
+            // Load the HTML content directly after initialization
+            String filePath = "https://mitogex.com/welcome.html"; // Replace this with the actual HTML file path
+            displayHTMLInPanel(filePath);
+        }
+        });
+}
+    
     // Implement the updateComboBox method from the ComboBoxUpdater interface
     @Override
     public void updateComboBox() {
@@ -80,19 +121,14 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
         jPanel3 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        jMenuItem6 = new javax.swing.JMenuItem();
-        jMenuItem7 = new javax.swing.JMenuItem();
-        jMenuItem8 = new javax.swing.JMenuItem();
-        jMenuItem9 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("MitoGEx : Mitochondria Genome Explorer");
@@ -130,7 +166,6 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel3.setText("FastQC Forward");
         jLabel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -146,12 +181,16 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
         jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jLabel6.setText("Haplogroup");
+        jLabel6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jLabel7.setText("Alignment quality");
         jLabel7.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jLabel8.setText("Multi-Sample quality");
         jLabel8.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        jLabel9.setText("Tree");
+        jLabel9.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -168,8 +207,10 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                     .addComponent(jLabel5)
                     .addComponent(jLabel6)
                     .addComponent(jLabel7)
-                    .addComponent(jLabel8))
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jSeparator1)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,20 +218,24 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addGap(9, 9, 9)
-                .addComponent(jLabel3)
-                .addGap(12, 12, 12)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel7)
-                .addGap(13, 13, 13)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel6)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9)
+                .addGap(11, 11, 11)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -232,40 +277,18 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
         });
         jMenu1.add(jMenuItem1);
 
-        jMenuItem2.setText("Export HTML");
+        jMenuItem2.setText("Share online...");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuItem3.setText("Exit");
         jMenu1.add(jMenuItem3);
 
         jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Execute");
-
-        jMenuItem4.setText("Run all");
-        jMenu2.add(jMenuItem4);
-
-        jMenuItem5.setText("Quality Control");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem5);
-
-        jMenuItem6.setText("Trimming");
-        jMenu2.add(jMenuItem6);
-
-        jMenuItem7.setText("Alignment");
-        jMenu2.add(jMenuItem7);
-
-        jMenuItem8.setText("Variant Calling");
-        jMenu2.add(jMenuItem8);
-
-        jMenuItem9.setText("Haplogroup ");
-        jMenu2.add(jMenuItem9);
-
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -390,10 +413,6 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
 //     } 
     }//GEN-LAST:event_jLabel3MouseClicked
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
-
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // Get the working directory and modify it
         String workingDir = System.getProperty("user.dir");
@@ -414,12 +433,12 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
             jLabel2.setVisible(fastpDir.exists());
 
             File multiQCDir = new File(baseDir + "MultiQC/");
-            jLabel1.setVisible(fastQCDir.exists());
+            jLabel1.setVisible(multiQCDir.exists());
             
-            File variantsDir = new File(baseDir + "ANNOVAR/");
+            File variantsDir = new File(baseDir + "Web/");
             jLabel5.setVisible(variantsDir.exists());
 
-            File haplogroupDir = new File(baseDir + "Haplogroup/" + selectedSample);
+            File haplogroupDir = new File(baseDir + "Web/");
             jLabel6.setVisible(haplogroupDir.exists());
             
             File qualimapDir = new File(baseDir + "AlignmentQuality/" + selectedSample);
@@ -427,6 +446,9 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
             
             File multiQualimapDir = new File(baseDir + "MultiSample_QC/");
             jLabel8.setVisible(multiQualimapDir.exists());
+            
+            File treeDir = new File(baseDir + "Phylogenetic/");
+            jLabel9.setVisible(treeDir.exists());
 
             // Display FastQC_1 HTML in jPanel3 if it exists
             if (fastQCDir.exists()) {
@@ -444,8 +466,10 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     if (fastQCDir.exists()) {
                         File fastQCFile = new File(fastQCDir, selectedSample + "_1_fastqc.html");
+                       
                         if (fastQCFile.exists()) {
-                            displayHTMLInPanel(fastQCFile.toURI().toString());
+                           displayHTMLInPanel(toFixedFileURL(fastQCFile));
+
                         } else {
                             System.out.println("FastQC HTML file not found: " + fastQCFile.getPath());
                         }
@@ -460,7 +484,7 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                     if (fastQCDir2.exists()) {
                         File fastQCFile2 = new File(fastQCDir2, selectedSample + "_2_fastqc.html");
                         if (fastQCFile2.exists()) {
-                            displayHTMLInPanel(fastQCFile2.toURI().toString());
+                            displayHTMLInPanel(toFixedFileURL(fastQCFile2));
                         } else {
                             System.out.println("FastQC HTML file not found: " + fastQCFile2.getPath());
                         }
@@ -475,7 +499,7 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                     if (multiQCDir.exists()) {
                         File multiQCFile = new File(multiQCDir, "multiqc_report.html");
                         if (multiQCFile.exists()) {
-                            displayHTMLInPanel(multiQCFile.toURI().toString());
+                            displayHTMLInPanel(toFixedFileURL(multiQCFile));
                         } else {
                             System.out.println("multiQC HTML file not found: " + multiQCFile.getPath());
                         }
@@ -490,7 +514,8 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                     if (fastpDir.exists()) {
                         File fastpFile = new File(fastpDir, selectedSample + ".html");
                         if (fastpFile.exists()) {
-                            displayHTMLInPanel(fastpFile.toURI().toString());
+                            displayHTMLInPanel(toFixedFileURL(fastpFile));
+
                         } else {
                             System.out.println("Fastp HTML file not found: " + fastpFile.getPath());
                         }
@@ -505,7 +530,7 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                     if (qualimapDir.exists()) {
                         File qualimapFile = new File(qualimapDir, "qualimapReport.html");
                         if (qualimapFile.exists()) {
-                            displayHTMLInPanel(qualimapFile.toURI().toString());
+                            displayHTMLInPanel(toFixedFileURL(qualimapFile));
                         } else {
                             System.out.println("Alignment Quality file not found: " + qualimapFile.getPath());
                         }
@@ -520,7 +545,7 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
                     if (multiQualimapDir.exists()) {
                         File multiQualimapFile = new File(multiQualimapDir, "multisampleBamQcReport.html");
                         if (multiQualimapFile.exists()) {
-                            displayHTMLInPanel(multiQualimapFile.toURI().toString());
+                           displayHTMLInPanel(toFixedFileURL(multiQualimapFile));
                         } else {
                             System.out.println("Multi-Sample Quality file not found: " + multiQualimapFile.getPath());
                         }
@@ -532,12 +557,42 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
             jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (qualimapDir.exists()) {
+                    if (variantsDir.exists()) {
                         File variantsFile = new File(variantsDir, "variants_"+selectedSample+".html");
                         if (variantsFile.exists()) {
-                            displayHTMLInPanel(variantsFile.toURI().toString());
+                            displayHTMLInPanel(toFixedFileURL(variantsFile));
                         } else {
                             System.out.println("Variants file not found: " + variantsFile.getPath());
+                        }
+                    }
+                }
+            });
+            
+            // Add MouseListener to jLabel5 to display Variants
+            jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    if (haplogroupDir.exists()) {
+                        File haplogroupFile = new File(haplogroupDir, "haplogroup.html");
+                        if (haplogroupFile.exists()) {
+                            displayHTMLInPanel(toFixedFileURL(haplogroupFile));
+                        } else {
+                            System.out.println("Haplogroup file not found: " + haplogroupFile.getPath());
+                        }
+                    }
+                }
+            });
+            
+            // Add MouseListener to jLabel5 to display Variants
+            jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    if (treeDir.exists()) {
+                        File treeFile = new File(treeDir, "tree.png");
+                        if (treeFile.exists()) {
+                            displayHTMLInPanel(toFixedFileURL(treeFile));
+                        } else {
+                            System.out.println("Tree file not found: " + treeFile.getPath());
                         }
                     }
                 }
@@ -546,61 +601,189 @@ public class Main_windows extends javax.swing.JFrame implements ComboBoxUpdater{
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
+    private String toFixedFileURL(File file) {
+    return "file:///" + file.getAbsolutePath().replace("\\", "/");
+}
+
     
     private void jComboBox1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jComboBox1PropertyChange
 
     }//GEN-LAST:event_jComboBox1PropertyChange
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        
+    // Create uploading dialog
+    final JDialog uploadingDialog = new JDialog((JFrame) null, "Uploading", false); // non-modal!
+    uploadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    uploadingDialog.setSize(300, 100);
+    uploadingDialog.setLocationRelativeTo(null);
+    uploadingDialog.setLayout(new BorderLayout());
+    uploadingDialog.add(new JLabel("📤 Uploading files to server...", SwingConstants.CENTER), BorderLayout.CENTER);
+
+   
+
+    SwingWorker<Void, Void> worker = new SwingWorker<>() {
+        @Override
+        protected Void doInBackground() {
+            try {
+                // Prompt for project name
+                String projectTitle = JOptionPane.showInputDialog(null, "Enter your project name:");
+                if (projectTitle == null || projectTitle.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Project name is required.", "Error", JOptionPane.WARNING_MESSAGE);
+                    return null;
+                }
+
+                projectTitle = projectTitle.trim().replaceAll("[^A-Za-z0-9_\\-]", "_");
+
+                String workingDir = System.getProperty("user.dir");
+                String new_workingDir = workingDir.replaceAll("target", "");
+                String path_web = new_workingDir + "/Results/Web_online/";
+
+                // Run bash script
+                String scriptPath = new_workingDir + "/Software/scripts/Web/collect_web.sh";
+                ProcessBuilder builder = new ProcessBuilder("/bin/bash", scriptPath, new_workingDir);
+                builder.directory(new File(new_workingDir));
+                builder.redirectErrorStream(true);
+                // Show dialog (non-blocking)
+    uploadingDialog.setVisible(true);
+                Process process = builder.start();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println("[Script] " + line);
+                    }
+                }
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    throw new RuntimeException("❌ Pre-upload script failed with exit code: " + exitCode);
+                }
+
+                File htmlDir = new File(path_web);
+                if (!htmlDir.exists()) {
+                    throw new FileNotFoundException("Web directory not found.");
+                }
+
+                final String sessionId = Long.toHexString(System.currentTimeMillis());
+                 final String finalProjectTitle = projectTitle;
+                final Path baseDir = htmlDir.toPath();
+                List<File> uploadedFiles = new ArrayList<>();
+ 
+                Files.walk(baseDir)
+                        .filter(Files::isRegularFile)
+                        .filter(p -> {
+                            String name = p.toString().toLowerCase();
+                            return name.endsWith(".html") || name.endsWith(".htm") || name.endsWith(".txt") ||
+                                    name.endsWith(".pdf") || name.endsWith(".css") || name.endsWith(".gif") ||
+                                    name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") ||
+                                    name.endsWith(".js");
+                        })
+                        .forEach(filePath -> {
+                            try {
+                                String relativePath = baseDir.relativize(filePath).toString().replace("\\", "/");
+                                File htmlFile = filePath.toFile();
+                                HTMLUploader.uploadReport(htmlFile, finalProjectTitle, sessionId, relativePath);
+                                uploadedFiles.add(htmlFile);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        });
+
+                if (uploadedFiles.size() < 5) {
+                    // Show a message dialog to inform the user
+    JOptionPane.showMessageDialog(null, 
+        "Pipeline incomplete: The results may not be fully displayed due to fewer than 5 files being uploaded.", 
+        "Incomplete Analysis", 
+        JOptionPane.INFORMATION_MESSAGE);
+                }
+
+                // ✅ Delete local /Results/Web_online/ directory
+                try {
+                    Files.walk(baseDir)
+                            .sorted(Comparator.reverseOrder())
+                            .map(Path::toFile)
+                            .forEach(File::delete);
+                    System.out.println("✅ Cleaned up: " + baseDir);
+                } catch (IOException cleanupEx) {
+                    cleanupEx.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Warning: Failed to delete upload folder.", "Cleanup Warning", JOptionPane.WARNING_MESSAGE);
+                }
+                
+                // ✅ Show final URL
+                String folderUrl = "https://mitogex.com/shared/" + projectTitle + "_" + sessionId;
+                JLabel label = new JLabel("<html>✅ Uploaded to: <a href='" + folderUrl + "'>" + folderUrl + "</a></html>");
+                label.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                label.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent e) {
+                        try {
+                            if (java.awt.Desktop.isDesktopSupported()) {
+                                java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+                                if (desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
+                                    desktop.browse(new java.net.URI(folderUrl));
+                                    return;
+                                }
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        copyToClipboard(folderUrl);
+                        JOptionPane.showMessageDialog(null,
+                                "✅ Your system doesn't support auto-opening the browser.\nLink copied to clipboard:\n" + folderUrl);
+                    }
+                });
+                uploadingDialog.dispose();
+                JButton copyButton = new JButton("📋 Copy Link");
+                copyButton.addActionListener(e -> {
+                    copyToClipboard(folderUrl);
+                    JOptionPane.showMessageDialog(null, "Link copied to clipboard!");
+                });
+
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.add(label, BorderLayout.CENTER);
+                panel.add(copyButton, BorderLayout.SOUTH);
+
+                JOptionPane.showMessageDialog(null, panel, "Upload Successful", JOptionPane.INFORMATION_MESSAGE);
+  
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Upload failed: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                // Always close loading dialog
+                uploadingDialog.dispose();
+            }
+            return null;
+        }
+    };
+
+    worker.execute(); // Start upload in background
+    
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    public static void copyToClipboard(String text) {
+    java.awt.datatransfer.StringSelection selection = new java.awt.datatransfer.StringSelection(text);
+    java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+}
+
+    
     private JFXPanel currentFxPanel;
     
 public void ensureJavaFXIsInitialized() {
-    if (Platform.isFxApplicationThread()) {
-        return; // JavaFX is already initialized
+    try {
+        Platform.startup(() -> {}); // Safe even if already started
+    } catch (IllegalStateException ignored) {
+        // JavaFX already initialized — ignore
     }
-
-    SwingUtilities.invokeLater(() -> {
-        new JFXPanel(); // This will initialize the JavaFX platform if not already done
-    });
 }
     
     private void displayHTMLInPanel(String url) {
-         ensureJavaFXIsInitialized();  // Ensure JavaFX is initialized
-
-    try {
-        System.out.println("Loading URL: " + url);  // Log the URL
-
-        jPanel3.removeAll();  // Clear previous content
-
-        if (currentFxPanel != null) {
-            System.out.println("Disposing old FxPanel");
-            currentFxPanel = null;
+         // Guarantee that the load happens on the JavaFX thread
+    Platform.runLater(() -> {
+        if (webEngine == null) {          // not ready yet
+            pendingUrl = url;             // String field you create
+            return;
         }
-
-        currentFxPanel = new JFXPanel();
-        currentFxPanel.setPreferredSize(new Dimension(800, 600));
-
-        jPanel3.setLayout(new BorderLayout());
-        jPanel3.add(currentFxPanel, BorderLayout.CENTER);
-
-        Platform.runLater(() -> {
-            WebView webView = new WebView();
-            WebEngine webEngine = webView.getEngine();
-
-            webEngine.load(null);
-            webEngine.load(url);
-
-            Scene scene = new Scene(webView);
-            currentFxPanel.setScene(scene);
-
-            System.out.println("Loaded URL successfully.");
-        });
-
-        jPanel3.revalidate();
-        jPanel3.repaint();
-
-    } catch (Exception e) {
-        e.printStackTrace();  // Print out any exceptions to the console
-    }
+        webEngine.getLoadWorker().cancel();
+        webEngine.load(url);
+    });
     }
 
     private void populateComboBoxWithDirectories() {
@@ -622,9 +805,12 @@ public void ensureJavaFXIsInitialized() {
                 String[] directoryNames = directory.list((current, name) -> new File(current, name).isDirectory());
                 if (directoryNames != null) {
                     for (String directoryName : directoryNames) {
-                        if (!directoryName.equals("multiqc_data")) { // Filter out "multiqc_data"
-                            sampleNames.add(directoryName);
-                        }
+                        if (!directoryName.equalsIgnoreCase("multiqc_data") && 
+    !directoryName.equalsIgnoreCase("trees") &&
+    !directoryName.equalsIgnoreCase("temp") &&
+    !directoryName.equalsIgnoreCase("summary")) {
+    sampleNames.add(directoryName);
+}
                     }
                 }
             } else {
@@ -687,20 +873,15 @@ public void ensureJavaFXIsInitialized() {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
-    private javax.swing.JMenuItem jMenuItem8;
-    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 }

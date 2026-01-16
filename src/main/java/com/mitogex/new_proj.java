@@ -5,12 +5,18 @@
 package com.mitogex;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,28 +24,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
 import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
+import javax.swing.ToolTipManager;
 
 /**
  *
@@ -51,11 +55,37 @@ public class new_proj extends javax.swing.JFrame {
      * Creates new form new_proj
      */
     private ComboBoxUpdater comboBoxUpdater;
-
+    private boolean containsGz = false;
+    private boolean containsBam = false;
+    private boolean containsFasta = false;
+    private JTextField fastpCore;
+    private JTextField fastpQualityField;
+    private JTextField fastpUnqualified_base;
+    private JTextField fastpReadLengthField;
+    private JTextField bwaThreadsField;
+    private JTextField bwaMinimumScore;
+    private JTextField fastQCCore;
+    private JTextField gatkMemoryField;
+    private JTextField qualimapThreads;
+//    private JTextField mutect2FilterField;
+    private JCheckBox gatkCheck;
+    private JCheckBox mitImpactCheck;
+    private JCheckBox haplogrepCheck;
+    private JCheckBox fastTreeCheck;
+    private JCheckBox haploCheckCheck;
+    private JCheckBox mutect2Check;
+    private JCheckBox fastpCheck;
+    private JCheckBox fastQCCheck;
+    private JCheckBox bwaCheck;
+    private JCheckBox qualimapCheck;
+    
     public new_proj(ComboBoxUpdater comboBoxUpdater) {
         this.comboBoxUpdater = comboBoxUpdater;
         initComponents();
         setLocationRelativeTo(null);
+        // Set tooltip visibility settings
+        ToolTipManager.sharedInstance().setInitialDelay(0);  // Show tooltip immediately
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);  // Keep tooltip visible while typing
     }
 
     /**
@@ -73,43 +103,12 @@ public class new_proj extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jLabel5 = new javax.swing.JLabel();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jLabel6 = new javax.swing.JLabel();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jLabel7 = new javax.swing.JLabel();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jLabel8 = new javax.swing.JLabel();
-        jCheckBox7 = new javax.swing.JCheckBox();
-        jLabel9 = new javax.swing.JLabel();
-        jCheckBox8 = new javax.swing.JCheckBox();
-        jLabel10 = new javax.swing.JLabel();
-        jCheckBox9 = new javax.swing.JCheckBox();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
-        jCheckBox10 = new javax.swing.JCheckBox();
-        jLabel12 = new javax.swing.JLabel();
-        jCheckBox12 = new javax.swing.JCheckBox();
-        jLabel13 = new javax.swing.JLabel();
-        jCheckBox13 = new javax.swing.JCheckBox();
-        jLabel14 = new javax.swing.JLabel();
-        jCheckBox14 = new javax.swing.JCheckBox();
-        jLabel18 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
         jLabel15 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Project");
 
         jTextField1.setText("Select directory...");
@@ -132,159 +131,6 @@ public class new_proj extends javax.swing.JFrame {
         jCheckBox1.setText("GRCh38");
         jCheckBox1.setEnabled(false);
 
-        jLabel3.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
-        jLabel3.setText("Main Analysis");
-
-        jPanel3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        jLabel4.setText("1. Quality Control");
-
-        jCheckBox2.setText("FastQC");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
-            }
-        });
-
-        jCheckBox3.setText("Fastp");
-        jCheckBox3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox3ActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText("2. Alignment");
-
-        jCheckBox4.setText("BWA");
-        jCheckBox4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox4ActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setText("3. Sort & Mark Duplicates");
-
-        jCheckBox5.setText("GATK");
-        jCheckBox5.setPreferredSize(new java.awt.Dimension(98, 22));
-        jCheckBox5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox5ActionPerformed(evt);
-            }
-        });
-
-        jLabel7.setText("4. Alignment Quality Assessment");
-
-        jCheckBox6.setText("Qualimap 2");
-        jCheckBox6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox6ActionPerformed(evt);
-            }
-        });
-
-        jLabel8.setText("5. Variant Calling");
-
-        jCheckBox7.setText("GATK (Mutect2)");
-        jCheckBox7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox7ActionPerformed(evt);
-            }
-        });
-
-        jLabel9.setText("6. Variant Annotation");
-
-        jCheckBox8.setText("MitoMaster");
-        jCheckBox8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox8ActionPerformed(evt);
-            }
-        });
-
-        jLabel10.setText("7. Haplogroup Identification");
-
-        jCheckBox9.setText("Haplogrep 3");
-        jCheckBox9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox9ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel10)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(jPanel3Layout.createSequentialGroup()
-                                    .addComponent(jCheckBox2)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jCheckBox3))
-                                .addComponent(jLabel6))))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jCheckBox4))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(jCheckBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(jCheckBox6))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addComponent(jCheckBox7))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jCheckBox9))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jCheckBox8)))
-                .addContainerGap(16, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jCheckBox3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8)
-                .addGap(5, 5, 5)
-                .addComponent(jCheckBox7)
-                .addGap(7, 7, 7)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel10)
-                .addGap(5, 5, 5)
-                .addComponent(jCheckBox9)
-                .addContainerGap(7, Short.MAX_VALUE))
-        );
-
         jButton2.setText("Submit");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -294,124 +140,6 @@ public class new_proj extends javax.swing.JFrame {
 
         jButton3.setText("Cancel");
 
-        jPanel4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        jLabel11.setText("8. Phylogenetic Tree");
-
-        jCheckBox10.setText("FastTree");
-        jCheckBox10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox10ActionPerformed(evt);
-            }
-        });
-
-        jLabel12.setText("9. Pathological Mutation");
-
-        jCheckBox12.setText("MitoPathoTool");
-        jCheckBox12.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox12ActionPerformed(evt);
-            }
-        });
-
-        jLabel13.setText("10. Contamination Check");
-
-        jCheckBox13.setText("HaploCheck");
-        jCheckBox13.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox13ActionPerformed(evt);
-            }
-        });
-
-        jLabel14.setText("11. Protein & Pathways");
-
-        jCheckBox14.setText("Mitocarta 3.0");
-        jCheckBox14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox14ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel14)))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jCheckBox10))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jCheckBox12))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jCheckBox13))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(jCheckBox14)))
-                .addContainerGap(41, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBox12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel13)
-                .addGap(4, 4, 4)
-                .addComponent(jCheckBox13)
-                .addGap(8, 8, 8)
-                .addComponent(jLabel14)
-                .addGap(5, 5, 5)
-                .addComponent(jCheckBox14)
-                .addContainerGap(7, Short.MAX_VALUE))
-        );
-
-        jLabel18.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
-        jLabel18.setText("Downstream Analysis");
-
-        jButton4.setText("Select all");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton5.setText("Deselect all");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
-
-        jButton6.setText("Select all");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-
-        jButton7.setText("Deselect all");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
-            }
-        });
-
         jLabel15.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
         jLabel15.setText("Project name");
 
@@ -419,12 +147,6 @@ public class new_proj extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jButton4)
-                .addGap(18, 18, 18)
-                .addComponent(jButton5)
-                .addContainerGap(288, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(9, 9, 9)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -440,35 +162,13 @@ public class new_proj extends javax.swing.JFrame {
                             .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 10, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addGap(18, 18, 18)
                 .addComponent(jButton3)
                 .addGap(178, 178, 178))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(97, 97, 97)
-                        .addComponent(jLabel3)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton6)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton7))
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                        .addComponent(jLabel18)
-                        .addGap(54, 54, 54))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -486,23 +186,7 @@ public class new_proj extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jCheckBox1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel18))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton6)
-                        .addComponent(jButton7))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton4)
-                        .addComponent(jButton5)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
@@ -517,7 +201,7 @@ public class new_proj extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -546,22 +230,33 @@ public class new_proj extends javax.swing.JFrame {
                     + chooser.getCurrentDirectory());
 
             File[] list_files = file.listFiles();
-            for (File file2 : list_files) {
-                if (file2.isFile()) {
-                    file_type = file2.getName().substring(file2.getName().lastIndexOf('.') + 1);
+            if (list_files != null) {
+                for (File file2 : list_files) {
+                    if (file2.isFile()) {
+                        String fileName = file2.getName();
+                        if (fileName.endsWith(".gz")) {
+                            containsGz = true;
+                        } else if (fileName.endsWith(".bam")) {
+                            containsBam = true;
+                        } else if (fileName.endsWith(".fasta")) {
+                            containsFasta = true;
+                        }
+                    }
                 }
             }
-            if (file_type.equals("gz")) {
-                System.out.println(".gz files selected.");
-            } else if (file_type.equals("fasta")) {
-                System.out.println(".fasta files selected.");
-//                this.jButton24.setEnabled(false);
-//                this.jButton23.setEnabled(false);
-//                this.jButton25.setEnabled(false);
-//                this.jButton20.setEnabled(false);
-            } else {
-                System.out.println("File type not valid.");
+
+            // Print the detected files for debugging
+            if (containsGz) {
+                System.out.println(".gz files detected.");
             }
+            if (containsBam) {
+                System.out.println(".bam files detected: Disabling Quality Control.");
+
+            }
+            if (containsFasta) {
+                System.out.println(".fasta files detected: Enabling Phylogenetic Tree.");
+            }
+
             String path_Program = new_workingDir.concat("/Software/scripts/./select_dir.sh");
 
             String path_folder = "Select folder is Successful\n";
@@ -632,70 +327,6 @@ public class new_proj extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
-
-    private void jCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox3ActionPerformed
-
-    private void jCheckBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox4ActionPerformed
-
-    private void jCheckBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox5ActionPerformed
-
-    private void jCheckBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox6ActionPerformed
-
-    private void jCheckBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox7ActionPerformed
-
-    private void jCheckBox8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox8ActionPerformed
-
-    private void jCheckBox9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox9ActionPerformed
-
-    private void jCheckBox10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox10ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox10ActionPerformed
-
-    private void jCheckBox12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox12ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox12ActionPerformed
-
-    private void jCheckBox13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox13ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox13ActionPerformed
-
-    private void jCheckBox14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox14ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox14ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        selectAllMainCheckBoxes(true);
-    }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        selectAllMainCheckBoxes(false);
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        selectAllDownStreamCheckBoxes(true);
-    }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        selectAllDownStreamCheckBoxes(false);
-    }//GEN-LAST:event_jButton7ActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
         // Ensure that both text fields are not empty
@@ -710,6 +341,7 @@ public class new_proj extends javax.swing.JFrame {
         String workingDir = System.getProperty("user.dir");
         String new_workingDir = workingDir.replaceAll("target", "");
         String path_Program = new_workingDir.concat("/Software/scripts/./pipeline_rCRS.sh");
+        String path_Program2 = new_workingDir.concat("/Software/scripts/./BAM_pipeline_rCRS.sh");
         String path_folder = "All process are successful\nThe result files are available at: " + new_workingDir + "/Results";
         String path_folder1 = new_workingDir.concat("/Software/file_log");
         String path_concat = path_folder.concat(path_folder1);
@@ -725,12 +357,16 @@ public class new_proj extends javax.swing.JFrame {
             while (line != null) {
                 sb.append("<span style='color: #666;'>").append(lineNumber).append(". </span>");
                 if (line.endsWith("_1.fastq.gz")) {
-                    sb.append(line.replace("_1.fastq.gz", "<span style='color: blue'>_1.fastq.gz</span>"));
-                } else if (line.endsWith("_2.fastq.gz")) {
-                    sb.append(line.replace("_2.fastq.gz", "<span style='color: red'>_2.fastq.gz</span>"));
-                } else {
-                    sb.append(line);
-                }
+        sb.append(line.replace("_1.fastq.gz", "<span style='color: blue'>_1.fastq.gz</span>"));
+    } else if (line.endsWith("_2.fastq.gz")) {
+        sb.append(line.replace("_2.fastq.gz", "<span style='color: red'>_2.fastq.gz</span>"));
+    } else if (line.endsWith("_1.fastq")) {
+        sb.append(line.replace("_1.fastq", "<span style='color: blue'>_1.fastq</span>"));
+    }else if (line.endsWith("_2.fastq")) {
+        sb.append(line.replace("_2.fastq", "<span style='color: red'>_2.fastq</span>"));
+    } else {
+        sb.append(line);
+    }
                 sb.append("<br>");
                 line = br.readLine();
                 lineNumber++;
@@ -741,7 +377,10 @@ public class new_proj extends javax.swing.JFrame {
             // Use a JEditorPane to display the HTML content
             JEditorPane htmlPane = new JEditorPane("text/html", file_list);
             htmlPane.setEditable(false);
-            check_files.add(htmlPane);
+            // Wrap in scroll pane
+            JScrollPane scrollPane = new JScrollPane(htmlPane);
+            scrollPane.setPreferredSize(new Dimension(800, 500)); // Adjust size as needed
+            check_files.add(scrollPane);
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(new_proj.class.getName()).log(Level.SEVERE, null, ex);
@@ -764,7 +403,7 @@ public class new_proj extends javax.swing.JFrame {
         mode_panel.add(advance_mode);
 
         // Add the panels to the frame
-        final JFrame frame = new JFrame("Check Files");
+        final JFrame frame = new JFrame("Files checking");
         frame.getContentPane().add(check_files, BorderLayout.CENTER);
         frame.getContentPane().add(mode_panel, BorderLayout.SOUTH);
         frame.pack();
@@ -791,7 +430,16 @@ public class new_proj extends javax.swing.JFrame {
                         JPanel myPanel = new JPanel();
                         myPanel.setLayout(new GridLayout(0, 1));
                         myPanel.add(new JLabel("Quick mode options"));
-                        myPanel.add(new JLabel("<html><h3>CPU Core</h3></html>"));
+                        // Add radio buttons for Fastp and FastQC
+                        myPanel.add(new JLabel("<html><h3>Quality Control Tool</h3></html>"));
+                        JRadioButton fastpRadio = new JRadioButton("Fastp", true);   // default selected
+                        JRadioButton fastqcRadio = new JRadioButton("FastQC");
+                        ButtonGroup qcGroup = new ButtonGroup();
+                        qcGroup.add(fastpRadio);
+                        qcGroup.add(fastqcRadio);
+                        myPanel.add(fastpRadio);
+                        myPanel.add(fastqcRadio);
+                        myPanel.add(new JLabel("<html><h3>Threads</h3></html>"));
                         myPanel.add(adjustField2);
                         System.out.println(new_workingDir);
                         JScrollPane scrPane = new JScrollPane(myPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -803,7 +451,16 @@ public class new_proj extends javax.swing.JFrame {
                             System.out.println("\t--threads: " + adjustField2.getText());
                             System.out.println(path_Program);
 
-                            String[] quick_command = {path_Program, new_workingDir, adjustField2.getText(), jTextField2.getText()};
+                            String pathToRun = containsBam ? path_Program2 : path_Program;
+                            String selectedQcTool = fastpRadio.isSelected() ? "fastp" : "fastqc";
+                            String[] quick_command = {
+                                pathToRun,
+                                new_workingDir,
+                                adjustField2.getText(), // CPU threads
+                                jTextField2.getText(), // Project name
+                                selectedQcTool, // Either "fastp" or "fastqc"
+                                jTextField1.getText() // Input directory
+                            };
                             Runtime r1 = Runtime.getRuntime();
                             try {
                                 JOptionPane.showMessageDialog(null,
@@ -825,7 +482,7 @@ public class new_proj extends javax.swing.JFrame {
                                 ProcessBuilder builder = new ProcessBuilder(quick_command);
                                 builder.redirectErrorStream(true);
                                 Process p1 = builder.start();
-                    
+
                                 // Set up reading the output
                                 InputStream itsOutput = p1.getInputStream();
                                 BufferedReader reader = new BufferedReader(new InputStreamReader(itsOutput));
@@ -871,34 +528,820 @@ public class new_proj extends javax.swing.JFrame {
                     }
                 } else if (advance_mode.isSelected()) {
                     System.out.println("Advance mode selected");
-                    // Perform advance mode actions here
-                } else {
-                    System.out.println("No mode selected");
+
+                    JFrame advancedFrame = new JFrame("Advanced Options");
+                    advancedFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    advancedFrame.setLayout(new BorderLayout());
+
+                    // Main Panel using GridLayout (2 columns)
+                    JPanel advancedPanel = new JPanel(new GridLayout(0, 2, 20, 10));
+
+                    // Left and Right Column Panels
+                    JPanel leftPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+                    JPanel rightPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+
+                    // ** Define Dependencies (Each program requires input from another) **
+                    Map<JCheckBox, JCheckBox> dependencies = new HashMap<>();
+
+                    // Section 1: Quality Control
+                    fastQCCheck = new JCheckBox("FastQC");
+                    fastpCheck = new JCheckBox("Fastp");
+
+//        fastQCCheck.setEnabled(containsGz);
+//        fastpCheck.setEnabled(containsGz);
+                    int label = Runtime.getRuntime().availableProcessors();
+                    String cores = String.valueOf(label / 2);
+
+                    fastpQualityField = new JTextField("Quality threshold (20-30)", 15);
+                    fastpCore = new JTextField("Threads", 5);
+                    fastQCCore = new JTextField("Threads", 5);
+                    fastpUnqualified_base = new JTextField("Unqualified base limit", 15);
+                    fastpReadLengthField = new JTextField("15",15);
+                    applyPlaceholder(fastQCCore, "Threads");
+                    applyPlaceholder(fastpCore, "Threads");
+                    applyPlaceholder(fastpQualityField, "Quality threshold (20-30)");
+                    applyPlaceholder(fastpUnqualified_base, "Unqualified base limit");
+                    applyPlaceholder(fastpReadLengthField, "Read length (Default: 15");                    
+                    fastpQualityField.setToolTipText("<html><b>-q, --qualified_quality_phred</b><br>The quality value that a base is qualified. Default 15 means phred quality >=Q15 is qualified. (int [=15])</html>");
+                    fastpUnqualified_base.setToolTipText("<html><b>-u, --unqualified_percent_limit</b><br>How many percents of bases are allowed to be unqualified (0~100). Default 40 means 40% (int [=40])</html>");
+                    fastpReadLengthField.setToolTipText("<html><b>-l, --length_required</b><br>reads shorter than length_required will be discarded, default is 15. (int [=15])</html>");
+                    fastQCCore.setToolTipText("<html><b>-t</b><br>Number of threads. Default 4 )</html>");
+                    fastpCore.setToolTipText("<html><b>-w</b><br>Number of threads. Default 4 )</html>");
+                    fastpQualityField.setEnabled(false);
+                    fastpCore.setEnabled(false);
+                    fastpUnqualified_base.setEnabled(false);
+                    fastQCCore.setEnabled(false);
+                    fastpReadLengthField.setEnabled(false);
+                    dependencies.put(fastpCheck, fastQCCheck); // Fastp requires FastQC
+
+                    fastpCheck.addActionListener(evt -> {
+                        boolean enabled = fastpCheck.isSelected();
+                        fastpQualityField.setEnabled(enabled);
+                        fastpCore.setEnabled(enabled);
+                        fastpUnqualified_base.setEnabled(enabled);
+                      fastpReadLengthField.setEnabled(enabled);
+                        // Automatically select GATK checkboxes if BWA is selected
+                        if (enabled) {
+                            gatkCheck.setSelected(true);
+                            mutect2Check.setSelected(true);
+                            mitImpactCheck.setEnabled(enabled);
+                            haploCheckCheck.setSelected(true);
+                            haplogrepCheck.setEnabled(enabled);
+                            gatkMemoryField.setEnabled(enabled);
+//                            mutect2FilterField.setEnabled(enabled);
+                            qualimapCheck.setSelected(true);
+                            bwaCheck.setEnabled(enabled);
+                            bwaCheck.setSelected(true);
+                        } else {
+                            // Optional: uncheck them if BWA is unselected
+                            gatkCheck.setSelected(false);
+                            mutect2Check.setSelected(false);
+                            haploCheckCheck.setSelected(false);
+                            mitImpactCheck.setSelected(false);
+                            haplogrepCheck.setEnabled(false);
+                            gatkMemoryField.setEnabled(enabled);
+//                            mutect2FilterField.setEnabled(enabled);
+                            qualimapCheck.setSelected(false);
+                            bwaCheck.setSelected(false);
+                        }
+
+                        // Also update their enabled states
+                        gatkCheck.setEnabled(enabled);
+                        mutect2Check.setEnabled(enabled);
+                        mitImpactCheck.setEnabled(enabled);
+                        haploCheckCheck.setEnabled(false);
+                        haplogrepCheck.setEnabled(enabled);
+                        qualimapCheck.setEnabled(enabled);
+                        qualimapThreads.setEnabled(enabled);
+                        bwaCheck.setEnabled(enabled);
+                        bwaThreadsField.setEnabled(enabled);
+                         bwaMinimumScore.setEnabled(enabled);
+                    });
+
+                    fastQCCheck.addActionListener(evt -> {
+                        boolean enabled = fastQCCheck.isSelected();
+                        fastQCCore.setEnabled(enabled);
+                        if (enabled) {
+                            gatkCheck.setSelected(true);
+                            mutect2Check.setSelected(true);
+                            mitImpactCheck.setEnabled(enabled);
+                            haploCheckCheck.setSelected(true);
+                            haplogrepCheck.setEnabled(enabled);
+                            gatkMemoryField.setEnabled(enabled);
+//                            mutect2FilterField.setEnabled(enabled);
+                            qualimapCheck.setSelected(true);
+                            bwaCheck.setEnabled(enabled);
+                            bwaCheck.setSelected(true);
+                        } else {
+                            // Optional: uncheck them if BWA is unselected
+                            gatkCheck.setSelected(false);
+                            mutect2Check.setSelected(false);
+                            haploCheckCheck.setSelected(false);
+                            mitImpactCheck.setSelected(false);
+                            haplogrepCheck.setEnabled(false);
+                            gatkMemoryField.setEnabled(enabled);
+//                            mutect2FilterField.setEnabled(enabled);
+                            qualimapCheck.setSelected(false);
+                            bwaCheck.setSelected(false);
+                        }
+
+                        // Also update their enabled states
+                        gatkCheck.setEnabled(enabled);
+                        mutect2Check.setEnabled(enabled);
+                        mitImpactCheck.setEnabled(enabled);
+                        haploCheckCheck.setEnabled(false);
+                        haplogrepCheck.setEnabled(enabled);
+                        qualimapCheck.setEnabled(enabled);
+                        qualimapThreads.setEnabled(enabled);
+                        bwaCheck.setEnabled(enabled);
+                        bwaThreadsField.setEnabled(enabled);
+                         bwaMinimumScore.setEnabled(enabled);
+                        fastpCheck.setEnabled(true);
+                    });
+
+                    JPanel qcPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    qcPanel.add(fastQCCheck);
+                    qcPanel.add(fastQCCore);
+                    qcPanel.add(fastpCheck);
+                    qcPanel.add(fastpQualityField);
+                    qcPanel.add(fastpCore);
+                    qcPanel.add(fastpUnqualified_base);
+                    qcPanel.add(fastpReadLengthField);
+                    leftPanel.add(new JLabel("1. Quality Control"));
+                    leftPanel.add(qcPanel);
+
+                    // Section 2: Alignment
+                    bwaCheck = new JCheckBox("BWA");
+                    bwaThreadsField = new JTextField("Threads (default: 4)", 15);
+                    bwaMinimumScore = new JTextField("Minimum score (Default: 30)",15);
+                    applyPlaceholder(bwaThreadsField, "Threads (Default: 4)");
+                    applyPlaceholder(bwaMinimumScore,"Minimum score");
+                    bwaMinimumScore.setToolTipText("<html><b>-T</b><br>The minimum score to output an alignment (default 30).</html>");
+                    bwaMinimumScore.setEnabled(false);
+                    bwaThreadsField.setEnabled(false);
+                    bwaCheck.setEnabled(false); // Initially disabled
+
+                    dependencies.put(bwaCheck, fastpCheck); // BWA requires Fastp
+
+                    bwaCheck.addActionListener(evt -> {
+                        boolean enabled = bwaCheck.isSelected();
+                        bwaThreadsField.setEnabled(enabled);
+                         bwaMinimumScore.setEnabled(enabled);
+                        // Automatically select GATK checkboxes if BWA is selected
+                        if (enabled) {
+                            gatkCheck.setSelected(true);
+                            mutect2Check.setSelected(true);
+                            mitImpactCheck.setEnabled(enabled);
+                            haploCheckCheck.setSelected(true);
+                            haplogrepCheck.setEnabled(enabled);
+                            gatkMemoryField.setEnabled(enabled);
+//                            mutect2FilterField.setEnabled(enabled);
+                            qualimapCheck.setSelected(true);
+                        } else {
+                            // Optional: uncheck them if BWA is unselected
+                            gatkCheck.setSelected(false);
+                            mutect2Check.setSelected(false);
+                            haploCheckCheck.setSelected(false);
+                            mitImpactCheck.setSelected(false);
+                            haplogrepCheck.setEnabled(false);
+                            gatkMemoryField.setEnabled(enabled);
+//                            mutect2FilterField.setEnabled(enabled);
+                            qualimapCheck.setSelected(false);
+                        }
+
+                        // Also update their enabled states
+                        gatkCheck.setEnabled(enabled);
+                        mutect2Check.setEnabled(enabled);
+                        mitImpactCheck.setEnabled(enabled);
+                        haploCheckCheck.setEnabled(false);
+                        haplogrepCheck.setEnabled(enabled);
+                        qualimapCheck.setEnabled(enabled);
+                        qualimapThreads.setEnabled(enabled);
+                    });
+
+                    JPanel alignPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    alignPanel.add(bwaCheck);
+                    alignPanel.add(bwaThreadsField);
+                    alignPanel.add(bwaMinimumScore);
+                    leftPanel.add(new JLabel("2. Alignment"));
+                    leftPanel.add(alignPanel);
+
+                    // Section 3: Sort & Mark Duplicates
+                    gatkCheck = new JCheckBox("GATK");
+                    gatkMemoryField = new JTextField("Memory (default: 8GB)", 15);
+                    applyPlaceholder(gatkMemoryField, "Memory (Default: 8GB)");
+                    gatkMemoryField.setEnabled(false);
+                    gatkCheck.setEnabled(false);
+
+                    dependencies.put(gatkCheck, bwaCheck); // GATK requires BWA
+
+                    gatkCheck.addActionListener(evt -> {
+                        boolean enabled = gatkCheck.isSelected();
+                        gatkMemoryField.setEnabled(enabled);
+                        // Automatically select GATK checkboxes if BWA is selected
+                        if (enabled) {
+
+                            qualimapCheck.setEnabled(true);
+                            qualimapThreads.setEnabled(true);
+//                            mutect2FilterField.setEnabled(enabled);
+                        } else {
+                            // Optional: uncheck them if BWA is unselected
+                            mitImpactCheck.setEnabled(enabled);
+                            haplogrepCheck.setEnabled(enabled);
+                            haploCheckCheck.setEnabled(false);
+                            haploCheckCheck.setSelected(false);
+                            mutect2Check.setSelected(false);
+//                            mutect2FilterField.setEnabled(enabled);
+
+                            qualimapCheck.setSelected(false);
+                            qualimapThreads.setEnabled(false);
+
+                        }
+
+                        // Also update their enabled states
+//                        mutect2FilterField.setEnabled(enabled);
+                        qualimapCheck.setEnabled(enabled);
+                    });
+
+                    JPanel sortPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    sortPanel.add(gatkCheck);
+                    sortPanel.add(gatkMemoryField);
+                    leftPanel.add(new JLabel("3. Sort & Mark Duplicates"));
+                    leftPanel.add(sortPanel);
+
+                    // Section 4: Alignment Quality
+                    qualimapCheck = new JCheckBox("Qualimap 2");
+                    qualimapThreads = new JTextField("Threads", 15);
+                    applyPlaceholder(qualimapThreads, "Threads");
+                    qualimapThreads.setEnabled(false);
+                    qualimapCheck.setEnabled(false);
+
+                    dependencies.put(qualimapCheck, bwaCheck); // Qualimap requires BWA
+
+                    qualimapCheck.addActionListener(evt -> qualimapThreads.setEnabled(qualimapCheck.isSelected()));
+
+                    JPanel qualPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    qualPanel.add(qualimapCheck);
+                    qualPanel.add(qualimapThreads);
+                    leftPanel.add(new JLabel("4. Alignment Quality"));
+                    leftPanel.add(qualPanel);
+
+                    // Section 5: Variant Calling
+                    mutect2Check = new JCheckBox("GATK (Mutect2)");
+//                    mutect2FilterField = new JTextField("Min Variant Quality (default: 30)", 15);
+//                    applyPlaceholder(mutect2FilterField, "Min Variant Quality (default: 30)");
+//                    mutect2FilterField.setEnabled(false);
+                    mutect2Check.setEnabled(false);
+
+                    dependencies.put(mutect2Check, gatkCheck); // Mutect2 requires GATK
+
+                    mutect2Check.addActionListener(evt -> {
+                        boolean enabled = mutect2Check.isSelected();
+//                        mutect2FilterField.setEnabled(enabled);
+
+                        // Set Qualimap when Mutect2 is selected
+                        qualimapCheck.setEnabled(enabled);
+                        qualimapCheck.setSelected(enabled);
+                        qualimapThreads.setEnabled(enabled);
+                        // Automatically select GATK checkboxes if BWA is selected
+                        if (enabled) {
+
+                            mitImpactCheck.setEnabled(enabled);
+                            haploCheckCheck.setSelected(true);
+                            haplogrepCheck.setEnabled(enabled);
+                        } else {
+                            // Optional: uncheck them if BWA is unselected
+
+                            qualimapCheck.setEnabled(true);
+                            haploCheckCheck.setSelected(false);
+                            mitImpactCheck.setSelected(false);
+
+                            JOptionPane.showMessageDialog(null,
+                                    "GATK (Mutect2) is not selected.\n\nThe following tools will be unavailable:\n"
+                                    + "• MitImpact\n• Haplogrep 3\n• HaploCheck\n• FastTree",
+                                    "Warning: Dependencies Disabled",
+                                    JOptionPane.WARNING_MESSAGE);
+                        }
+
+                        // Also update their enabled states
+                        mitImpactCheck.setEnabled(enabled);
+                        haploCheckCheck.setEnabled(false);
+                        haplogrepCheck.setEnabled(enabled);
+
+                    });
+
+                    JPanel variantPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    variantPanel.add(mutect2Check);
+//                    variantPanel.add(mutect2FilterField);
+                    leftPanel.add(new JLabel("5. Variant Calling"));
+                    leftPanel.add(variantPanel);
+
+                    // Section 6: Variant Annotation (Right Column)
+                    mitImpactCheck = new JCheckBox("MitImpact");
+                    mitImpactCheck.setEnabled(false);
+                    dependencies.put(mitImpactCheck, mutect2Check); // MitImpact requires Mutect2
+
+                    JPanel annotationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    annotationPanel.add(mitImpactCheck);
+                    rightPanel.add(new JLabel("6. Variant Annotation"));
+                    rightPanel.add(annotationPanel);
+
+                    // Section 7: Haplogroup Identification
+                    haplogrepCheck = new JCheckBox("Haplogrep 3");
+                    haplogrepCheck.setEnabled(false);
+                    dependencies.put(haplogrepCheck, mutect2Check); // Haplogrep requires Mutect2
+
+                    haplogrepCheck.addActionListener(evt -> {
+                        boolean enabled = haplogrepCheck.isSelected();
+//     haplogrepCheckField.setEnabled(enabled);
+                        // Automatically select GATK checkboxes if BWA is selected
+                        if (enabled) {
+
+                            fastTreeCheck.setEnabled(true);
+
+                        } else {
+                            // Optional: uncheck them if BWA is unselected
+
+                            fastTreeCheck.setSelected(false);
+                        }
+
+                        // Also update their enabled states
+                        fastTreeCheck.setEnabled(enabled);
+
+                    });
+                    JPanel haploPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    haploPanel.add(haplogrepCheck);
+                    rightPanel.add(new JLabel("7. Haplogroup Identification"));
+                    rightPanel.add(haploPanel);
+
+                    // Section 8: Phylogenetic Tree
+                    fastTreeCheck = new JCheckBox("FastTree");
+                    fastTreeCheck.setEnabled(false);
+                    dependencies.put(fastTreeCheck, haplogrepCheck); // FastTree requires BWA
+
+                    JPanel treePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    treePanel.add(fastTreeCheck);
+                    rightPanel.add(new JLabel("8. Phylogenetic Tree"));
+                    rightPanel.add(treePanel);
+
+                    // Section 9: Contamination Check
+                    haploCheckCheck = new JCheckBox("HaploCheck");
+                    haploCheckCheck.setEnabled(false);
+                    dependencies.put(haploCheckCheck, mutect2Check); // HaploCheck requires Mutect2
+
+                    JPanel contaminationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    contaminationPanel.add(haploCheckCheck);
+                    rightPanel.add(new JLabel("9. Contamination Check"));
+                    rightPanel.add(contaminationPanel);
+
+                    // Add both panels to the main panel
+                    advancedPanel.add(leftPanel);
+                    advancedPanel.add(rightPanel);
+
+                    // **Fix the Apply Button Position**
+                    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+                    JButton applyAdvancedButton = new JButton("Apply Advanced Options");
+                    applyAdvancedButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent evt) {
+
+                            try {
+                                // Execute the selected tools with user input
+                                executeTool();
+                            } catch (IOException ex) {
+                                Logger.getLogger(new_proj.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                        }
+                    });
+                    buttonPanel.add(applyAdvancedButton);
+
+                    // **Enable dependencies dynamically**
+                    for (Map.Entry<JCheckBox, JCheckBox> entry : dependencies.entrySet()) {
+                        JCheckBox dependent = entry.getKey();
+                        JCheckBox required = entry.getValue();
+
+                        required.addActionListener(evt -> dependent.setEnabled(required.isSelected()));
+                    }
+
+                    if (containsGz == true) {
+                        System.out.println("All tools can select.");
+
+                    } else if (containsBam == true) {
+                        fastQCCheck.setSelected(false);
+                        fastQCCheck.setEnabled(false);
+
+                        fastpCheck.setSelected(false);
+                        fastpCheck.setEnabled(false);
+
+                        gatkCheck.setEnabled(true);
+                        gatkCheck.setSelected(true);
+                        gatkMemoryField.setEnabled(true);
+                        qualimapCheck.setEnabled(true);
+                        qualimapCheck.setSelected(true);
+                        qualimapThreads.setEnabled(true);
+                        mutect2Check.setEnabled(true);
+                        mutect2Check.setSelected(true);
+//                        mutect2FilterField.setEnabled(true);
+                        mitImpactCheck.setEnabled(true);
+                        haplogrepCheck.setEnabled(true);
+//    haploCheckCheck.setEnabled(true);
+                        haploCheckCheck.setSelected(true);
+                    }
+
+                    // Display Panel in a New Window
+                    advancedFrame.add(new JScrollPane(advancedPanel), BorderLayout.CENTER);
+                    advancedFrame.add(buttonPanel, BorderLayout.SOUTH);
+                    advancedFrame.pack();
+                    advancedFrame.setLocationRelativeTo(null);
+                    advancedFrame.setVisible(true);
+
+                    // Handle Apply Button Click
+                    applyAdvancedButton.addActionListener(evt
+                            -> JOptionPane.showMessageDialog(advancedFrame, "Advanced options applied."));
+
                 }
             }
+
         });
 
         mode_panel.add(submit_button);
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void selectAllMainCheckBoxes(boolean select) {
-        jCheckBox2.setSelected(select);
-        jCheckBox3.setSelected(select);
-        jCheckBox4.setSelected(select);
-        jCheckBox5.setSelected(select);
-        jCheckBox6.setSelected(select);
-        jCheckBox7.setSelected(select);
-        jCheckBox8.setSelected(select);
-        jCheckBox9.setSelected(select);
+    private void applyPlaceholder(JTextField field, String placeholder) {
+        field.setText(placeholder);
+//    field.setPreferredSize(new Dimension(250, field.getPreferredSize().height)); // Set the size
 
+        field.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (field.getText().equals(placeholder)) {
+                    field.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (field.getText().isEmpty()) {
+                    field.setText(placeholder);
+                }
+            }
+        });
     }
 
-    private void selectAllDownStreamCheckBoxes(boolean select) {
+    private void executeTool() throws IOException {
+        String fastpThreshold = fastpQualityField.getText().trim().isEmpty() 
+                ? "15" : fastpQualityField.getText().trim();
+String fastpCoreValue = fastpCore.getText().trim().isEmpty() 
+                ? "4" : fastpCore.getText().trim();
+String fastpUnqualifiedValue = fastpUnqualified_base.getText().trim().isEmpty() 
+                ? "40" : fastpUnqualified_base.getText().trim();
+String fastpReadLengthValue = fastpReadLengthField.getText().trim().isEmpty() 
+                ? "15" : fastpReadLengthField.getText().trim();
+String bwaThreadsValue = bwaThreadsField.getText().trim().isEmpty() 
+                ? "4" : bwaThreadsField.getText().trim();  // Get threads for BWA
+String bwaMinimumScoreValue = bwaMinimumScore.getText().trim().isEmpty() 
+                ? "30" : bwaMinimumScore.getText().trim();
 
-        jCheckBox10.setSelected(select);
-        jCheckBox12.setSelected(select);
-        jCheckBox13.setSelected(select);
-        jCheckBox14.setSelected(select);
+        
+       
+        String workingDir = System.getProperty("user.dir");
+        String new_workingDir = workingDir.replaceAll("target", "");
+        String path_Program = new_workingDir + "/Software/file_log/all_file_log.txt";
+        String path_output = new_workingDir + "/Results/Fastp/";
+        String logDirPath = new_workingDir + "/Logs/";
+        File logDir = new File(logDirPath);
+        if (!logDir.exists()) {
+            logDir.mkdirs();
+        }
+
+// Find next available log file name
+        int logCounter = 1;
+        File logFile;
+        do {
+            logFile = new File(logDir, "MitoGEx_advanced.log." + logCounter);
+            logCounter++;
+        } while (logFile.exists());
+
+// Prepare the log writer
+        BufferedWriter logWriter = new BufferedWriter(new FileWriter(logFile));
+        if (fastQCCheck != null && fastQCCheck.isSelected()) {
+            System.out.println("FastQC is selected.");
+
+            String fastqcScript = new_workingDir + "/Software/scripts/./qualityControl_FastQC_rCRS.sh";
+            String cores = fastQCCore.getText().trim();
+            if (cores.isEmpty() || cores.contains("Default")) {
+                cores = "4";
+            }
+
+            String fastqcCommand = String.format("%s %s %s", fastqcScript, new_workingDir, cores);
+            logWriter.write("Running FastQC command: " + fastqcCommand);
+            logWriter.newLine();
+
+            boolean success = runCommand(fastqcCommand, new_workingDir, logWriter);
+            if (success) {
+                SwingUtilities.invokeLater(() -> fastQCCheck.setEnabled(false));
+            }
+        }
+
+        // Construct the command for Fastp
+        if (fastpCheck != null && fastpCheck.isSelected()) {
+
+            System.out.println("Fastp is selected.");
+
+            List<String> r1Paths = new ArrayList<>();
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(path_Program))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("_1.fastq.gz")) {
+                        r1Paths.add(line.trim());
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            boolean allSuccess = true;
+
+            for (String r1Path : r1Paths) {
+                String r2Path = r1Path.replace("_1.fastq.gz", "_2.fastq.gz");
+
+                File r2File = new File(r2Path);
+                if (!r2File.exists()) {
+                    System.out.println("Missing pair for: " + r1Path);
+                    continue;
+                }
+
+                // Extract sample name from file path
+                String fileName = new File(r1Path).getName(); // e.g., TMRC65015_1.fastq.gz
+                String sampleName = fileName.replace("_1.fastq.gz", "");
+
+                // Create per-sample output directory
+                File sampleFolder = new File(path_output, sampleName);
+                if (!sampleFolder.exists()) {
+                    sampleFolder.mkdirs();
+                }
+
+                // Output file paths
+                String outputR1 = new File(sampleFolder, sampleName + "_1.fastq.gz").getAbsolutePath();
+                String outputR2 = new File(sampleFolder, sampleName + "_2.fastq.gz").getAbsolutePath();
+
+                // Print for debugging
+                System.out.println("Sample: " + sampleName);
+                System.out.println("R1: " + r1Path);
+                System.out.println("R2: " + r2Path);
+                System.out.println("OutputR1: " + outputR1);
+                System.out.println("OutputR2: " + outputR2);
+
+                // Build and run fastp command
+                String fastpCommand = String.format(
+                        "fastp -q %s -u %s -w %s -l %s -i %s -I %s -o %s -O %s --verbose --html %s.html --json %s.json",
+                        fastpThreshold, fastpUnqualifiedValue, fastpCoreValue, fastpReadLengthValue,
+                        r1Path, r2Path, outputR1, outputR2, sampleName, sampleName
+                );
+
+                System.out.println("Running command: " + fastpCommand);
+                logWriter.write("Running command: " + fastpCommand);
+                logWriter.newLine();
+                String sampleDir = sampleFolder.getAbsolutePath();
+                boolean success = runCommand(fastpCommand, sampleDir, logWriter);
+                if (!success) {
+                    allSuccess = false;
+                }
+
+            }
+            if (allSuccess) {
+                SwingUtilities.invokeLater(() -> fastpCheck.setEnabled(false));
+            }
+        }
+
+        // Construct the command for BWA
+        if (bwaCheck != null && bwaCheck.isSelected()) {
+            System.out.println("BWA is selected");
+
+            String bwaScript = new_workingDir + "/Software/scripts/align_rCRS.sh";
+
+            String userInputDir = jTextField1.getText(); // From Browse
+
+            String bwaCommand = String.format("%s %s %s %s %s", bwaScript, new_workingDir, bwaThreadsValue, userInputDir, bwaMinimumScoreValue);
+
+            logWriter.write("Running BWA command: " + bwaCommand);
+            logWriter.newLine();
+
+            boolean bwaSuccess = runCommand(bwaCommand, new_workingDir, logWriter);
+            if (bwaSuccess) {
+                SwingUtilities.invokeLater(() -> bwaCheck.setEnabled(false));
+            }
+        }
+
+        if (gatkCheck != null && gatkCheck.isSelected()) {
+            System.out.println("Sort & Add Read Groups (Picard) is selected");
+
+            String sortScript = new_workingDir + "/Software/scripts/sort_rCRS.sh";
+
+           String rawMem = gatkMemoryField.getText().trim();
+// ถ้าว่าง -> ใช้ "8", ถ้าไม่ว่าง -> ใช้ค่าที่พิมพ์
+String gatkMemoryFieldValue = (rawMem.isEmpty()) ? "8" : rawMem;
+
+// จัด Format ให้เป็น -Xmx...g
+if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
+    gatkMemoryFieldValue = "-Xmx" + gatkMemoryFieldValue + "g";
+}
+
+            if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
+                gatkMemoryFieldValue = "-Xmx" + gatkMemoryFieldValue + "g";
+            }
+
+            String projectTitle = jTextField2.getText().trim();
+            if (projectTitle.isEmpty()) {
+                projectTitle = "MitoGEx";
+            }
+            String bamInputPath = containsBam ? jTextField1.getText().trim() : new_workingDir + "/Results/BAM_rCRS";
+
+            String sortCommand = String.format("%s %s %s \"%s\" \"%s\" \"%s\"",
+                    sortScript, new_workingDir, bwaThreadsValue, gatkMemoryFieldValue, projectTitle, bamInputPath);
+
+            logWriter.write("Running Sort & Add Groups command: " + sortCommand);
+            logWriter.newLine();
+
+    boolean sortSuccess = runCommand(sortCommand, new_workingDir, logWriter);
+    if (sortSuccess) {
+        SwingUtilities.invokeLater(() -> gatkCheck.setEnabled(false));
+    }
+        }
+
+        if (qualimapCheck != null && qualimapCheck.isSelected()) {
+            System.out.println("Qualimap is selected");
+
+            String qualimapScript = new_workingDir + "/Software/scripts/alignQuality_rCRS.sh";
+
+            //Did not fix
+            String qualimapThreadsValue = (qualimapThreads.getText().trim().isEmpty())
+                    ? qualimapThreads.getText().trim() : "8";
+
+            boolean isMutect2Selected = mutect2Check != null && mutect2Check.isSelected();
+            String bamDir = isMutect2Selected
+                    ? "Main_analysis_pipeline_output/Align"
+                    : "Sort_rCRS";
+
+            String qualimapCommand = String.format("%s %s %s %s", qualimapScript, new_workingDir, qualimapThreadsValue, bamDir);
+
+            logWriter.write("Running Qualimap command: " + qualimapCommand);
+            logWriter.newLine();
+
+            boolean qualimapSuccess = runCommand(qualimapCommand, new_workingDir, logWriter);
+            if (qualimapSuccess) {
+                SwingUtilities.invokeLater(() -> {
+                    qualimapCheck.setEnabled(false);
+
+                    if (!isMutect2Selected) {
+                        // Disable downstream tools
+                        mutect2Check.setEnabled(false);
+                        mutect2Check.setSelected(false);
+
+                        mitImpactCheck.setEnabled(false);
+                        mitImpactCheck.setSelected(false);
+
+                        haplogrepCheck.setEnabled(false);
+                        haplogrepCheck.setSelected(false);
+
+                        haploCheckCheck.setEnabled(false);
+                        haploCheckCheck.setSelected(false);
+
+                        fastTreeCheck.setEnabled(false);
+                        fastTreeCheck.setSelected(false);
+
+                        // 🔔 Show message to the user
+                        JOptionPane.showMessageDialog(this,
+                                "You did not select GATK (Mutect2), so the following tools are disabled:\n\n"
+                                + "• MitImpact\n• Haplogrep 3\n• HaploCheck\n• FastTree",
+                                "Tool Dependency Warning",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
+                });
+            }
+        }
+
+        if (mutect2Check != null && mutect2Check.isSelected()) {
+            System.out.println("Variant Calling mutect2 is selected");
+
+            String mutect2Script = new_workingDir + "/Software/scripts/mitPipeline_rCRS.sh";
+
+//            String mutect2FilterFieldValue = (mutect2FilterField.getText().trim().isEmpty())
+//                    ? mutect2FilterField.getText().trim() : "30";
+
+            String mutect2Command = String.format("%s %s %s ",
+                    mutect2Script, new_workingDir, bwaThreadsValue);
+
+            logWriter.write("Running Sort & Add Groups command: " + mutect2Command);
+            logWriter.newLine();
+
+    boolean mutect2Success = runCommand(mutect2Command, new_workingDir, logWriter);
+    if (mutect2Success) {
+        SwingUtilities.invokeLater(() -> mutect2Check.setEnabled(false));
+    }
+        }
+
+        if (mitImpactCheck != null && mitImpactCheck.isSelected()) {
+            System.out.println("Variant Annotation mitImpact is selected");
+
+            String mitImpactScript = new_workingDir + "/Software/scripts/annotate_rCRS.sh";
+
+//    String mitImpactFilterFieldValue = (mitImpactFilterField.getText().trim().isEmpty()) 
+//                                       ? mitImpactFilterField.getText().trim() : "30";
+            String mitImpactCommand = String.format("%s %s %s",
+                    mitImpactScript, new_workingDir, bwaThreadsValue);
+
+            logWriter.write("Running mitImpact command: " + mitImpactCommand);
+            logWriter.newLine();
+
+             boolean mitImpactSuccess = runCommand(mitImpactCommand, new_workingDir, logWriter);
+             if (mitImpactSuccess) {
+                 SwingUtilities.invokeLater(() -> mitImpactCheck.setEnabled(false));
+             }
+        }
+
+        if (haplogrepCheck != null && haplogrepCheck.isSelected()) {
+            System.out.println("Haplogroup Identification haplogrep is selected");
+
+            String haplogrepScript = new_workingDir + "/Software/scripts/haplogroupClassifier_rCRS.sh";
+
+//    String haplogrepFilterFieldValue = (haplogrepFilterField.getText().trim().isEmpty()) 
+//                                       ? haplogrepFilterField.getText().trim() : "30";
+            String haplogrepCommand = String.format("%s %s %s",
+                    haplogrepScript, new_workingDir, bwaThreadsValue);
+
+            logWriter.write("Running haplogrep command: " + haplogrepCommand);
+            logWriter.newLine();
+
+             boolean haplogrepSuccess = runCommand(haplogrepCommand, new_workingDir, logWriter);
+             if (haplogrepSuccess) {
+                 SwingUtilities.invokeLater(() -> haplogrepCheck.setEnabled(false));
+             }
+        }
+
+        if (fastTreeCheck != null && fastTreeCheck.isSelected()) {
+            System.out.println("Phylogenetic Tree fastTree is selected");
+
+            String fastTreeScript = new_workingDir + "/Software/scripts/phylogenetic_rCRS.sh";
+
+//    String fastTreeFilterFieldValue = (fastTreeFilterField.getText().trim().isEmpty()) 
+//                                       ? fastTreeFilterField.getText().trim() : "30";
+            String fastTreeCommand = String.format("%s %s %s",
+                    fastTreeScript, new_workingDir, bwaThreadsValue);
+
+            logWriter.write("Running fastTree command: " + fastTreeCommand);
+            logWriter.newLine();
+
+             boolean fastTreeSuccess = runCommand(fastTreeCommand, new_workingDir, logWriter);
+             if (fastTreeSuccess) {
+                 SwingUtilities.invokeLater(() -> fastTreeCheck.setEnabled(false));
+             }
+        }
+
+        try {
+            logWriter.close();
+            JOptionPane.showMessageDialog(this, "Advanced mode complete. Log saved to: " + logFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean runCommand(String command, String workingDirPath, BufferedWriter logWriter) {
+        boolean success = false;
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
+            if (workingDirPath != null && !workingDirPath.trim().isEmpty()) {
+                processBuilder.directory(new File(workingDirPath));
+            }
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+                logWriter.write(line);
+                logWriter.newLine();
+            }
+
+            process.waitFor();
+            success = (process.exitValue() == 0);
+            if (!success) {
+                logWriter.write("Command failed: " + command);
+                logWriter.newLine();
+            }
+        } catch (IOException | InterruptedException e) {
+            try {
+                logWriter.write("Exception occurred: " + e.getMessage());
+                logWriter.newLine();
+            } catch (IOException ioEx) {
+                ioEx.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        return success;
     }
 
     /**
@@ -940,42 +1383,11 @@ public class new_proj extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox10;
-    private javax.swing.JCheckBox jCheckBox12;
-    private javax.swing.JCheckBox jCheckBox13;
-    private javax.swing.JCheckBox jCheckBox14;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JCheckBox jCheckBox7;
-    private javax.swing.JCheckBox jCheckBox8;
-    private javax.swing.JCheckBox jCheckBox9;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables

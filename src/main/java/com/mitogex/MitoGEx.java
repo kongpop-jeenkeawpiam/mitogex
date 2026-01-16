@@ -4,7 +4,10 @@
 
 package com.mitogex;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,8 +32,8 @@ public class MitoGEx {
 
         // If an update was applied, exit to allow the application to restart
         if (updateApplied) {
-            System.out.println("Update applied. Exiting application.");
-            System.exit(0);
+            System.out.println("Apllication is up to date.");
+//            System.exit(0);
         }
 
         // Show splash screen
@@ -67,17 +70,40 @@ public class MitoGEx {
         String concat = new_workingDir.concat("/Results/Fasta");
         String path_Update = new_workingDir.concat("/Software/scripts/./update.sh");
         try {
-            // Run the shell script
-            String[] update_command = {path_Update, new_workingDir};
-            ProcessBuilder processBuilder = new ProcessBuilder(path_Update);
-            Process process = processBuilder.start();
+        // Run the shell script
+        String[] updateCommand = {path_Update, new_workingDir};
+        ProcessBuilder processBuilder = new ProcessBuilder(updateCommand);
 
-            // Wait for the script to complete
-            int exitCode = process.waitFor();
+        // Redirect the error stream to the standard output stream for easier handling
+        processBuilder.redirectErrorStream(true);
 
-            // Check the exit code: 0 means update was applied
+        // Start the process
+        Process process = processBuilder.start();
+
+        // Create a thread to read the output
+            Thread outputThread = new Thread(() -> {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line); // Print the script's output to the console
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            outputThread.start();
+
+            // Wait for the script to complete, with a timeout of 15 seconds
+            if (!process.waitFor(30, TimeUnit.SECONDS)) {
+                System.out.println("Update script timed out. Proceeding with the program.");
+                process.destroy(); // Terminate the process forcefully
+                return false;
+            }
+
+            // Get exit code to check if the update was successful
+            int exitCode = process.exitValue();
             if (exitCode == 0) {
-                System.out.println("Update  applied successfully.");
+                System.out.println("Update applied successfully.");
                 return true;
             } else {
                 System.out.println("No update was applied or script failed.");
