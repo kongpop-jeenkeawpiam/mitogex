@@ -1,19 +1,57 @@
 #!/bin/bash -l
 LOGFILE="install_$(date +%Y%m%d_%H%M%S).log"
 exec > >(tee -a "$LOGFILE") 2>&1
+
 echo "==== MitoGEx Installation Started $(date) ===="
-echo "Logging to: $LOGFILE"
-sudo apt-get -y update
-sudo apt install -y default-jre
-sudo apt install -y default-jdk
-sudo apt-get install -y build-essential
-sudo apt-get install -y libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff-dev libtiff5-dev libjpeg-dev
-sudo apt-get install -y zlib1g-dev libxml2-dev libcurl4-openssl-dev libssl-dev
-sudo apt-get install -y jq
-sudo apt-get install -y iqtree
-sudo apt install -y libgl1-mesa-glx libglx-mesa0 libgl1-mesa-dri mesa-utils
-sudo snap install yq
-sudo apt install -y r-base-core
+
+APT_PACKAGES=(
+    "default-jre" "default-jdk" "build-essential" "jq" "iqtree" "r-base-core" "curl"
+    "libfontconfig1-dev" "libharfbuzz-dev" "libfribidi-dev" "libfreetype6-dev"
+    "libpng-dev" "libtiff-dev" "libtiff5-dev" "libjpeg-dev" "zlib1g-dev" "libxml2-dev" 
+    "libcurl4-openssl-dev" "libssl-dev" "libgl1-mesa-glx" "libglx-mesa0" 
+    "libgl1-mesa-dri" "mesa-utils"
+)
+
+MISSING_PKGS=()
+echo "Checking system dependencies..."
+for pkg in "${APT_PACKAGES[@]}"; do
+    # ตรวจสอบว่าลงไว้หรือยัง (ส่ง output ไป /dev/null เพื่อความสะอาด)
+    if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+        MISSING_PKGS+=("$pkg")
+    fi
+done
+
+YQ_MISSING=false
+if ! command -v yq &> /dev/null; then
+    YQ_MISSING=true
+fi
+
+if [ ${#MISSING_PKGS[@]} -eq 0 ] && [ "$YQ_MISSING" = false ]; then
+    echo "[OK] All system dependencies are already installed. No sudo needed."
+else
+    echo "--------------------------------------------------------"
+    echo "The following system packages are MISSING:"
+    [ ${#MISSING_PKGS[@]} -gt 0 ] && printf "  - %s\n" "${MISSING_PKGS[@]}"
+    [ "$YQ_MISSING" = true ] && echo "  - yq (via snap)"
+    echo "--------------------------------------------------------"
+    echo "Note: Installation of these packages requires 'sudo' privileges."
+    read -p "Do you want to proceed with 'sudo apt-get install'? (y/n): " run_sudo
+
+    if [[ "$run_sudo" =~ ^[Yy]$ ]]; then
+        echo "Updating repositories..."
+        sudo apt-get update
+        if [ ${#MISSING_PKGS[@]} -gt 0 ]; then
+            echo "Installing missing apt packages..."
+            sudo apt-get install -y "${MISSING_PKGS[@]}"
+        fi
+        if [ "$YQ_MISSING" = true ]; then
+            echo "Installing yq via snap..."
+            sudo snap install yq
+        fi
+    else
+        echo "[Skip] Skipping sudo-based installation. Some features might not work."
+    fi
+fi
 #Conda environment
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
@@ -27,9 +65,6 @@ conda init bash
 conda activate mitogex_ete
 ete3 build check
 conda activate mitogex
-
-#Install packages
-sudo apt install -y curl
 
 #Install R packages
 Rscript -e 'if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager", repos = "https://cloud.r-project.org")' 
