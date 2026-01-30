@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Docker
-- For GUI: X11 server (Linux/macOS) or VcXsrv/X410 (Windows)
+- For GUI: X11 server (Linux) or VcXsrv/X410 (Windows)
 
 ## Quick Start
 
@@ -122,5 +122,6 @@ data/
 ├── sample2_1.fastq.gz
 └── sample2_2.fastq.gz
 ```
+
 
 
