@@ -41,8 +41,7 @@ MitoGEx automates sequencing data analysis using:
 ## ✅ Installation (Docker)
 
 ### Requirements
-- Docker Engine 20.10+
-- Docker Compose v2+
+- Docker
 - Linux desktop with X11 (for GUI). WSLg also works on Windows 11.
 
 ### Steps
