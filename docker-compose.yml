@@ -1,0 +1,78 @@
+services:
+  mitogex:
+    user: "${USER_ID}:${GROUP_ID}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mitogex_app
+    image: mitogex:latest
+    
+    # Environment variables
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+      - HOME=/opt/mitogex	
+    # Volumes - mount data directories
+    volumes:
+      # Input data directory
+      - ./data:/opt/mitogex/data
+      
+      # Output directory for results
+      - ./output:/opt/mitogex/output
+      
+      # Reference genomes (download separately to avoid large image)
+      - ./references:/opt/mitogex/Software/References
+      
+      # Logs directory
+      - ./Logs:/opt/mitogex/Logs
+      
+      # X11 socket for GUI (Linux only)
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      
+      #- ./file_log:/opt/mitogex/Software/file_log
+      
+      - ./Results:/opt/mitogex/Results
+      
+      - ./run.sh:/opt/mitogex/run.sh
+      # Optional: Mount your own config files
+      # - ./config:/opt/mitogex/config
+    
+    # Network mode for X11 forwarding
+    network_mode: host
+    
+    # Privileged mode for GUI access (Linux only)
+    # Comment out if not using GUI
+    privileged: true
+    
+    # Keep container running
+    stdin_open: true
+    tty: true
+    
+    # Resource limits (adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+          memory: 16G
+        reservations:
+          cpus: '4'
+          memory: 8G
+
+  # Optional: Xvfb service for headless GUI rendering
+  xvfb:
+    image: jlesage/baseimage-gui:alpine-3.12
+    container_name: mitogex_display
+    environment:
+      - DISPLAY=:99
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    command: Xvfb :99 -screen 0 1920x1080x24
+
+# Named volumes for persistent data
+volumes:
+  references:
+    driver: local
+  output:
+    driver: local
+

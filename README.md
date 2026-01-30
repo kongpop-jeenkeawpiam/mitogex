@@ -1,6 +1,6 @@
 # 🧬 Mitochondrial Genome Exploration (MitoGEx)
 
-### Mitochondrial Genome Explorer: A User-Friendly Computational Pipeline for Comprehensive Mitochondrial Genome Analysis
+### Mitochondrial Genome Explorer: A User-Friendly Computational Pipeline for Comprehensive Human Mitochondrial Genome Analysis
 
 **MitoGEx** is a user-friendly tool designed for comprehensive mtDNA analysis, including quality control, alignment, variant calling, annotation, haplogroup classification, and phylogenetic visualization, all in one pipeline.
 
@@ -38,22 +38,59 @@ MitoGEx automates sequencing data analysis using:
 - Haplogroup classifications
 - Phylogenetic trees
 
----
-## 🚀 Installation Guide
-To get started with **MitoGEx**, make sure you have **Miniconda** (or Anaconda) installed on your system. 
+## ✅ Installation (Docker)
+
+### Requirements
+- Docker Engine 20.10+
+- Docker Compose v2+
+- Linux desktop with X11 (for GUI). WSLg also works on Windows 11.
+
+### Steps
 ```bash
 git clone https://github.com/kongpop-jeenkeawpiam/mitogex.git
 cd mitogex
 ```
-Then, simply run the installation script provided in the repository:
+
+Build the image:
 ```bash
+docker compose build
+```
+
+Run the GUI (X11 forwarding):
+```bash
+./run-gui-x11.sh
+```
+
+### Input/Output folders
+These folders are mounted by default and are safe to use:
+- `data/` → input FASTQ/BAM files
+- `output/` → output results
+- `Results/` → pipeline results
+- `Logs/` → logs
+- `references/` → reference genomes
+
+---
+
+## ✅ Installation (Non-Docker)
+
+### Requirements
+- Linux (tested on Ubuntu 22.04)
+- Miniconda or Anaconda installed
+
+### Steps
+```bash
+git clone https://github.com/kongpop-jeenkeawpiam/mitogex.git
+cd mitogex
 source install.sh
 ```
-Once the installation is complete, you can launch MitoGEx using:
+
+Run the GUI:
 ```bash
 source run.sh
 ```
+
 ---
+
 
 ## 🚀 Features
 
