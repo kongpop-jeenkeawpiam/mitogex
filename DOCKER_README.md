@@ -36,7 +36,7 @@ chmod +x run-gui-x11.sh
 ```
 .
 ├── Dockerfile              # Main Docker image definition
-├── docker_compose.yml      # Docker Compose configuration
+├── docker-compose.yml      # Docker Compose configuration
 ├── .dockerignore          # Build context exclusions
 ├── docker-setup.sh         # Setup helper script
 ├── run-gui-x11.sh       # GUI launcher script
@@ -80,7 +80,7 @@ docker compose run --rm mitogex bash run.sh
 
 ## Resource Configuration
 
-Edit `docker compose.yml` to adjust:
+Edit `docker-compose.yml` to adjust:
 - CPU limits: `cpus: '8'`
 - Memory: `memory: 16G`
 
@@ -97,7 +97,7 @@ Edit `docker compose.yml` to adjust:
 
 ### Issue: Out of memory
 - Increase Docker memory limit in Docker Desktop settings
-- Adjust limits in docker compose.yml
+- Adjust limits in docker-compose.yml
 
 ### Issue: Reference files missing
 - Manually download to `./references/`:
@@ -122,6 +122,7 @@ data/
 ├── sample2_1.fastq.gz
 └── sample2_2.fastq.gz
 ```
+
 
 
 
