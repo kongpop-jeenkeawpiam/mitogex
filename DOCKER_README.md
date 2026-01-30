@@ -36,13 +36,13 @@ chmod +x run-gui-x11.sh
 ```
 .
 ├── Dockerfile              # Main Docker image definition
-├── docker compose.yml      # Docker Compose configuration
+├── docker_compose.yml      # Docker Compose configuration
 ├── .dockerignore          # Build context exclusions
 ├── docker-setup.sh         # Setup helper script
-├── docker-run-gui.sh       # GUI launcher script
+├── run-gui-x11.sh       # GUI launcher script
 ├── DOCKER_README.md        # This file
 ├── data/                   # Input data (mounted volume)
-├── output/                 # Results (mounted volume)
+├── Results/                 # Results (mounted volume)
 ├── references/             # Reference genomes (mounted volume)
 └── Logs/                   # Application logs (mounted volume)
 ```
@@ -122,4 +122,5 @@ data/
 ├── sample2_1.fastq.gz
 └── sample2_2.fastq.gz
 ```
+
 
