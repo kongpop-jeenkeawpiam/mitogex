@@ -64,7 +64,6 @@ Run the GUI (X11 forwarding):
 ### Input/Output folders
 These folders are mounted by default and are safe to use:
 - `data/` → input FASTQ/BAM files
-- `output/` → output results
 - `Results/` → pipeline results
 - `Logs/` → logs
 - `references/` → reference genomes
@@ -89,6 +88,11 @@ Run the GUI:
 source run.sh
 ```
 
+### Input/Output folders
+These folders are mounted by default and are safe to use:
+- Input FASTQ or BAM → users can select entire directory with GUI application
+- `Results/` → pipeline results
+- `Logs/` → logs
 ---
 
 
