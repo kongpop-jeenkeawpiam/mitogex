@@ -2,8 +2,7 @@
 
 ## Prerequisites
 
-- Docker (20.10+)
-- Docker Compose (2.0+)
+- Docker
 - For GUI: X11 server (Linux/macOS) or VcXsrv/X410 (Windows)
 
 ## Quick Start
@@ -123,3 +122,4 @@ data/
 ├── sample2_1.fastq.gz
 └── sample2_2.fastq.gz
 ```
+
