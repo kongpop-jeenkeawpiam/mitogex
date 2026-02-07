@@ -1,7 +1,6 @@
 # 🧬 Mitochondrial Genome Exploration (MitoGEx)
 
-### Mitochondrial Genome Explorer: A User-Friendly Computational Pipeline for Comprehensive Human Mitochondrial Genome Analysis
-
+### Mitochondrial Genome Explorer: An Integrated Platform for Streamlined Human Mitochondrial Genome Analysis
 **MitoGEx** is a user-friendly tool designed for comprehensive mtDNA analysis, including quality control, alignment, variant calling, annotation, haplogroup classification, and phylogenetic visualization, all in one pipeline.
 
 ---
