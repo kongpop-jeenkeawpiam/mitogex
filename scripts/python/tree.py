@@ -1,6 +1,5 @@
 from ete3 import Tree, TreeStyle, TextFace, NodeStyle
-import sys
-
+import sys,os
 mitogex_path = sys.argv[1]
 contree_path = sys.argv[2]
 
@@ -31,5 +30,5 @@ ts.show_branch_length = False
 ts.show_scale = True
 # 4. Render the image
 # You can save as .png, .pdf, or .svg (better for papers)
-t.render(mitogex_path+"tree.svg", w=300, units="mm", tree_style=ts)
+t.render(os.path.join(mitogex_path, "tree.svg"), w=300, units="mm", tree_style=ts)
 print("Tree image generated: tree.png")
