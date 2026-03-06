@@ -31,7 +31,7 @@ if [ "$qc_tool" == "fastqc" ]; then
     for p in "$files_dir"/*.fastq "$files_dir"/*.fastq.gz; do
         if [ -f "$p" ]; then
             filename=$(basename -- "$p")
-            filename1="${filename%%_*}"
+            filename1="${filename%_*}"
             mkdir -p "$qc_fol/${filename1}"
             fastqc -t ${2} "$p" --outdir="$qc_fol/${filename1}"
         fi
@@ -55,7 +55,7 @@ if [ "$qc_tool" == "fastp" ]; then
     while read p; do
         counter=$((counter+1))
         filename=$(basename -- "$p")
-        filename1="${filename%%_*}"
+        filename1="${filename%_*}"
 
         mkdir -p "$1/Results/Fastp/${filename1}"
         file2="${p/_1/_2}"
@@ -140,7 +140,7 @@ else
 fi
 for i in $input_loop_path; do
     filename=$(basename -- "$i")
-    filename1="${filename%%_*}"    # Extract the base name
+    filename1="${filename%_*}"    # Extract the base name
     file2=${i//_1/_2}              # Replace _1 with _2 for the pair
 
     # Perform alignment
@@ -304,8 +304,9 @@ cd $1/Results/ANNOVAR
 if [[ "$VCFFile" != *"index"* ]]; then
         # Your processing commands go here
         echo "Processing $VCFFile"
-        perl $1/Software/annovar/convert2annovar.pl -format vcf4 ${VCFFile} > ${filename}.avinput
-        perl $1/Software/annovar/table_annovar.pl ${filename}.avinput $1/Software/annovar/humandb -buildver hg38 -out ${filename} -remove -protocol MitImpact313 -operation f -nastring . -polish
+        perl $1/Software/annovar/convert2annovar.pl -format vcf4 -includeinfo ${VCFFile} > ${filename}.avinput
+        perl $1/Software/annovar/table_annovar.pl ${filename}.avinput $1/Software/annovar/humandb -buildver hg38 -out ${filename} -remove -protocol MitImpact313 -operation f -nastring . -polish -otherinfo
+        python $1/Software/scripts/python/extract_heteroplasmy.py ${filename}.hg38_multianno.txt
         # Add the rest of your commands to process the file
     else
         echo "Skipping $VCFFile (contains 'index')"
@@ -441,8 +442,8 @@ fi
 bash $1/Software/scripts/Web/web_index.sh "${1}" > $1/Results/Web/index.html
 
 # Generate sample.html for each BASENAME in the loop
-for FILE in "$1/Results/ANNOVAR"/*.hg38_multianno.txt; do
-    BASENAME=$(basename "$FILE" .hg38_multianno.txt)
+for FILE in "$1/Results/ANNOVAR"/*.hg38_multianno_clean.txt; do
+    BASENAME=$(basename "$FILE" .hg38_multianno_clean.txt)
     bash $1/Software/scripts/Web/web_sample.sh "${1}" "${BASENAME}" > "$1/Results/Web/sample_${BASENAME}.html"
     # bash $1/Software/scripts/Web/web_variants.sh "${1}" "${BASENAME}" > "$1/Results/ANNOVAR/variants_${BASENAME}.html"
     bash $1/Software/scripts/Web/web_variants.sh "${1}" "${BASENAME}" > "$1/Results/Web/variants_${BASENAME}.html"
