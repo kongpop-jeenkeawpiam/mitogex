@@ -5,7 +5,7 @@ SAMPLE="$2"
 BASE_DIR="$1"
 TARGET_DIR="$BASE_DIR/Results/ANNOVAR"
 LOGO_DIR="$BASE_DIR/Software/scripts/Web"
-INPUT_FILE="$TARGET_DIR/${SAMPLE}.hg38_multianno.txt"
+INPUT_FILE="$TARGET_DIR/${SAMPLE}.hg38_multianno_clean.txt"
 # Start creating the HTML file
 cat <<EOL
 <!DOCTYPE html>
@@ -79,9 +79,10 @@ cat <<EOL
                             <th>Ref</th>
                             <th>Alt</th>
                             <th>Gene Symbol</th>
-                            <th>Functional Effect</th>
+                            <th>Heteroplasmy Levels</th>
                             <th>MITOMAP Disease Clinical Information</th>
                             <th>MITOMAP Disease Clinical Status</th>
+                            <th>Filter</th>
                             <th>Details</th>
                         </tr>
                     </thead>
@@ -91,7 +92,7 @@ EOL
 counter=1
  # Read the input file for the sample and generate table rows
 if [[ -f "$INPUT_FILE" ]]; then
-    tail -n +2 "$INPUT_FILE" | while IFS=$'\t' read -r Chr Start End Ref Alt Molecule_type Gene_symbol Extended_annotation Gene_position Gene_start Gene_end Gene_strand Codon_substitution AA_ref AA_alt AA_pos Functional_effect_general Functional_effect_detailed OMIM_id HGVS HGNC_id Respiratory_Chain_complex Ensembl_protein_id Ensembl_transcript_id Ensembl_gene_id Uniprot_id Uniprot_name NCBI_gene_id NCBI_protein_id PolyPhen2 PolyPhen2_score SIFT SIFT_score SIFT4G SIFT4G_score VEST_pvalue VEST VEST_FDR Mitoclass1 SNPDryad_score SNPDryad MitoTip_count MutationTaster_score MutationTaster_converted_rankscore MutationTaster MutationTaster_model MutationTaster_AAE FATHMM_score FATHMM_converted_rankscore FATHMM AlphaMissense_score AlphaMissense CADD_score CADD_phred_score CADD PROVEAN_score PROVEAN MutationAssessor MutationAssessor_score EFIN_SP_score EFIN_SP EFIN_HD_score EFIN_HD MLC MLC_score PANTHER PANTHER_score PhD_SNP PhD_SNP_score APOGEE1_score APOGEE1 APOGEE2_score APOGEE2_probability APOGEE2 CAROL_score CAROL Condel_score Condel COVEC_WMV_score COVEC_WMV MtoolBox_DS MtoolBox DEOGEN2_score DEOGEN2_rankscore DEOGEN2 Meta_SNP Meta_SNP_score PhastCons_100V PhyloP_100V PhyloP_470Way PhastCons_470Way Clinvar_id Clinvar_ALLELEID Clinvar_CLNDISDB Clinvar_CLNDN Clinvar_CLNSIG MITOMAP_Disease_Hom_Het MITOMAP_Disease_Clinical_info MITOMAP_Disease_Status MITOMAP_General_GenBank_Freq MITOMAP_General_GenBank_Seqs MITOMAP_General_GenBank_Curated_refs MITOMAP_Variant_Class HelixMTdb_AC_hom HelixMTdb_AF_hom HelixMTdb_AC_het HelixMTdb_AF_het HelixMTdb_mean_ARF HelixMTdb_max_ARF ToMMo_54KJPN_AC ToMMo_54KJPN_AF ToMMo_54KJPN_AN Gnomad_AN Gnomad_AC_hom Gnomad_AC_het Gnomad_AF_hom Gnomad_AF_het Gnomad_filter GenBank_freq hpl_cnt_tot_frq Dloop_genbank_haplogroup_count COSMIC_90_id dbSNP_156 SIFT_transf_score SIFT_transf PolyPhen2_transf_score PolyPhen2_transf MutationAssessor_transf_score MutationAssessor_transf CHASM_pvalue CHASM_FDR CHASM CPD_Frequency CPD_AA_ref CPD_AA_alt CPD_Aln_pos CPD_RefSeq_protein_id CPD_Species_name CPD_Ncbi_taxon_id EVmutation Site_A_InterP Site_B_InterP Covariation_score_InterP Site_A_IntraP Site_B_IntraP Covariation_score_IntraP DDG_intra DDG_intra_interface DDG_inter homoplasmy heteroplasmy; do
+    tail -n +2 "$INPUT_FILE" | while IFS=$'\t' read -r Chr Start End Ref Alt HeteroplasmyLevels Molecule_type Gene_symbol Extended_annotation Gene_position Gene_start Gene_end Gene_strand Codon_substitution AA_ref AA_alt AA_pos Functional_effect_general Functional_effect_detailed OMIM_id HGVS HGNC_id Respiratory_Chain_complex Ensembl_protein_id Ensembl_transcript_id Ensembl_gene_id Uniprot_id Uniprot_name NCBI_gene_id NCBI_protein_id PolyPhen2 PolyPhen2_score SIFT SIFT_score SIFT4G SIFT4G_score VEST_pvalue VEST VEST_FDR Mitoclass1 SNPDryad_score SNPDryad MitoTip_count MutationTaster_score MutationTaster_converted_rankscore MutationTaster MutationTaster_model MutationTaster_AAE FATHMM_score FATHMM_converted_rankscore FATHMM AlphaMissense_score AlphaMissense CADD_score CADD_phred_score CADD PROVEAN_score PROVEAN MutationAssessor MutationAssessor_score EFIN_SP_score EFIN_SP EFIN_HD_score EFIN_HD MLC MLC_score PANTHER PANTHER_score PhD_SNP PhD_SNP_score APOGEE1_score APOGEE1 APOGEE2_score APOGEE2_probability APOGEE2 CAROL_score CAROL Condel_score Condel COVEC_WMV_score COVEC_WMV MtoolBox_DS MtoolBox DEOGEN2_score DEOGEN2_rankscore DEOGEN2 Meta_SNP Meta_SNP_score PhastCons_100V PhyloP_100V PhyloP_470Way PhastCons_470Way Clinvar_id Clinvar_ALLELEID Clinvar_CLNDISDB Clinvar_CLNDN Clinvar_CLNSIG MITOMAP_Disease_Hom_Het MITOMAP_Disease_Clinical_info MITOMAP_Disease_Status MITOMAP_General_GenBank_Freq MITOMAP_General_GenBank_Seqs MITOMAP_General_GenBank_Curated_refs MITOMAP_Variant_Class HelixMTdb_AC_hom HelixMTdb_AF_hom HelixMTdb_AC_het HelixMTdb_AF_het HelixMTdb_mean_ARF HelixMTdb_max_ARF ToMMo_54KJPN_AC ToMMo_54KJPN_AF ToMMo_54KJPN_AN Gnomad_AN Gnomad_AC_hom Gnomad_AC_het Gnomad_AF_hom Gnomad_AF_het Gnomad_filter GenBank_freq hpl_cnt_tot_frq Dloop_genbank_haplogroup_count COSMIC_90_id dbSNP_156 SIFT_transf_score SIFT_transf PolyPhen2_transf_score PolyPhen2_transf MutationAssessor_transf_score MutationAssessor_transf CHASM_pvalue CHASM_FDR CHASM CPD_Frequency CPD_AA_ref CPD_AA_alt CPD_Aln_pos CPD_RefSeq_protein_id CPD_Species_name CPD_Ncbi_taxon_id EVmutation Site_A_InterP Site_B_InterP Covariation_score_InterP Site_A_IntraP Site_B_IntraP Covariation_score_IntraP DDG_intra DDG_intra_interface DDG_inter homoplasmy heteroplasmy Otherinfo1 Otherinfo2	Otherinfo3	Otherinfo4	Otherinfo5	Otherinfo6	VCF_Filter	Otherinfo8	Otherinfo9	Otherinfo10; do
         cat <<EOL
                         <tr>
                             <td>${counter}</td>
@@ -99,9 +100,10 @@ if [[ -f "$INPUT_FILE" ]]; then
                             <td>${Ref}</td>
                             <td>${Alt}</td>
                             <td>${Gene_symbol}</td>
-                            <td>${Functional_effect_general}</td>
+                            <td>$(printf '%.3f' ${HeteroplasmyLevels} 2>/dev/null || echo ${HeteroplasmyLevels})</td>
                             <td>${MITOMAP_Disease_Clinical_info}</td>
                             <td>${MITOMAP_Disease_Status}</td>
+                            <td>${VCF_Filter}</td>
                             <td><a href="#" class="btn btn-outline-primary btn-sm variant-details-btn" data-id="${counter}" data-position="${Start}" data-end="${End}" data-ref="${Ref}" data-alt="${Alt}" data-gene="${Gene_symbol}" data-effect="${Functional_effect_general}" data-polyphen2="${PolyPhen2}" data-sift="${SIFT}" data-molecule="${Molecule_type}" data-annotation="${Extended_annotation}" data-siftfour="${SIFT4G}" data-vest="${VEST}" data-mitoclass="${Mitoclass1}" data-snpdryad="${SNPDryad}" data-mutationtaster="${MutationTaster}" data-fathmm="${FATHMM}" data-alphamissense="${AlphaMissense}" data-provean="${PROVEAN}" data-mutationassessor="${MutationAssessor}" data-efinsp="${EFIN_SP}" data-efinhd="${EFIN_HD}" data-mlc="${MLC}" data-panther="${PANTHER}" data-phdsnp="${PhD_SNP}" data-apogee1="${APOGEE1}" data-apogee2="${APOGEE2}" data-carol="${CAROL}" data-cadd="${CADD}" data-condel="${Condel}" data-covecwmv="${COVEC_WMV}" data-mtoolbox="${MtoolBox}" data-deogen2="${DEOGEN2}" data-metasnp="${Meta_SNP}" data-mitomapdisease="${MITOMAP_Disease_Status}" data-sifttransf="${SIFT_transf}" data-polyphen2sf="${PolyPhen2_transf}" data-mutationassessortransf="${MutationAssessor_transf}" data-chasm="${CHASM}">Variant Details</a></td>
                         </tr>
 EOL
@@ -109,7 +111,7 @@ EOL
         ((counter++))
     done
 else
-    echo "<tr><td colspan='9'>No data available for sample ${SAMPLE}</td></tr>"
+    echo "<tr><td colspan='10'>No data available for sample ${SAMPLE}</td></tr>"
 fi
 
    cat <<EOL
@@ -121,9 +123,10 @@ fi
                             <th>Ref</th>
                             <th>Alt</th>
                             <th>Gene Symbol</th>
-                            <th>Functional Effect</th>
+                            <th>Heteroplasmy Levels</th>
                             <th>MITOMAP Disease Clinical Information</th>
                             <th>MITOMAP Disease Clinical Status</th>
+                            <th>Filter</th>
                             <th>Details</th>
                         </tr>
                     </tfoot>
