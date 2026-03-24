@@ -98,6 +98,51 @@ fi
 cd ${mitogex_dir}/Software/
 echo "Extracting ANNOVAR..."
 tar -xvf annovar.latest.tar.gz 
+mkdir -p ${mitogex_dir}/Software/annovar/humandb
+
+
+
+# ==========================================
+
+# MitImpact Database Check
+
+# ==========================================
+
+echo "Checking MitImpact Database..."
+
+MITIMPACT_FILE="${mitogex_dir}/Software/annovar/humandb/hg38_MitImpact313.txt"
+
+
+
+if [ ! -f "$MITIMPACT_FILE" ]; then
+
+    echo ""
+
+    echo "------------------------------------------------------------"
+
+    echo "NOTICE: MitImpact Database requires manual preparation."
+
+    echo "1. Download raw MitImpact data from: https://mitimpact.mcb2lab.org/"
+
+    echo "2. Use the standalone script to format it:"
+
+    echo "   bash mitimpact_format.sh <raw_file> > hg38_MitImpact313.txt"
+
+    echo "3. Place the formatted 'hg38_MitImpact313.txt' in:"
+
+    echo "   ${mitogex_dir}/Software/annovar/humandb/"
+
+    echo "------------------------------------------------------------"
+
+    echo ""
+
+    while [ ! -f "$MITIMPACT_FILE" ]; do
+
+        read -p "Once you have placed the formatted file, press [Enter] to continue (or Ctrl+C to abort)..."
+
+    done
+
+fi
 
 cd ${mitogex_dir}/Software/
 
