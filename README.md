@@ -37,6 +37,15 @@ MitoGEx automates sequencing data analysis using:
 - Haplogroup classifications
 - Phylogenetic trees
 
+---
+  ## ⚠️ Important: ANNOVAR License
+MitoGEx utilizes **ANNOVAR** for variant annotation. Due to licensing restrictions:
+1. ANNOVAR is **free only for personal, academic, and non-profit use**.
+2. **Registration:** [Download ANNOVAR here](https://www.openbioinformatics.org/annovar/annovar_download_form.php).
+
+
+---
+
 ## ✅ Installation (Docker)
 
 ### Requirements
@@ -48,7 +57,8 @@ MitoGEx automates sequencing data analysis using:
 git clone https://github.com/kongpop-jeenkeawpiam/mitogex.git
 cd mitogex
 ```
-
+Prepare ANNOVAR:
+Place your downloaded annovar.latest.tar.gz in the project root directory (the same folder as the Dockerfile)
 Build the image:
 ```bash
 docker compose build
@@ -78,7 +88,13 @@ These folders are mounted by default and are safe to use:
 ```bash
 git clone https://github.com/kongpop-jeenkeawpiam/mitogex.git
 cd mitogex
+
+
 source install.sh
+
+Prepare ANNOVAR:
+Register and download annovar.latest.tar.gz from the official website.
+Place the file into the Software/ folder.
 ```
 
 Run the GUI:
@@ -126,6 +142,14 @@ These folders are mounted by default and are safe to use:
 ## 💰 Funding
 
 This research was supported by the **Graduate Scholarship from the Faculty of Medicine, Prince of Songkla University**.
+
+---
+
+---
+
+## 📢 Citation
+If you use MitoGEx in your research, please cite our paper in **Genes**:
+> *Jeenkeawpiam K, Srifa P, Nokchan N, Khongcharoen N, Binkasem A, Sangkhathat S. MitoGEx: An Integrated Platform for Streamlined Human Mitochondrial Genome Analysis. Genes. * [[Link to Paper](https://www.mdpi.com/2073-4425/17/3/338)]
 
 ---
 
