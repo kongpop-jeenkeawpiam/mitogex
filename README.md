@@ -38,12 +38,25 @@ MitoGEx automates sequencing data analysis using:
 - Phylogenetic trees
 
 ---
-  ## ⚠️ Important: ANNOVAR License
-MitoGEx utilizes **ANNOVAR** for variant annotation. Due to licensing restrictions:
-1. ANNOVAR is **free only for personal, academic, and non-profit use**.
-2. **Registration:** [Download ANNOVAR here](https://www.openbioinformatics.org/annovar/annovar_download_form.php).
+  ## ⚠️ Data Preparation (Required)
+Due to licensing restrictions, some third-party databases and software cannot be redistributed with MitoGEx. Users must obtain these files personally for academic or non-profit research purposes.
+**ANNOVAR Installation**
+ANNOVAR is free only for personal, academic, and non-profit use.
+1. Registration: [Download ANNOVAR here](https://www.openbioinformatics.org/annovar/annovar_download_form.php).
+2. Placement: After receiving the download link via email, download annovar.latest.tar.gz and place it in the Software/ directory of MitoGEx.
+3. Automatic Extraction: The install.sh script will detect and extract this file for you.
 
+**MitImpact 3D Database**
+The MitImpact 3D database requires manual formatting to be compatible with the ANNOVAR annotation tool used in MitoGEx.
+1. Download Raw Data: Download the latest MitImpact database (Tab-separated format) directly from the [Official MitImpact website](https://mitimpact.mcb2lab.org/cdn/MitImpact_db_3.1.3.txt.zip).
+2. Format the Data: Use the provided standalone script to remove restricted identifiers and reformat the columns for ANNOVAR compatibility.
 
+```bash
+# Run the formatting script
+bash mitimpact_format.sh mitimpact_original.txt > hg38_MitImpact313.txt
+```
+3. Deployment: Move the generated hg38_MitImpact313.txt file to the following directory:
+ * `Software/annovar/humandb/`
 ---
 
 ## ✅ Installation (Docker)
