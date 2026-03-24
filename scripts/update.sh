@@ -64,38 +64,18 @@ else
     log "Application is up to date."
 fi
 
-# Step 3: Check for database updates
+# Step 3: Check for database updates 
 log "Checking for database updates..."
 if [ "$LATEST_DB_VERSION" != "$LOCAL_DB_VERSION" ]; then
-    log "Database update available: $LATEST_DB_VERSION. Current version: $LOCAL_DB_VERSION."
-    log "Downloading MitImpact database file for version $LATEST_DB_VERSION..."
-
-    # Create a temporary directory for the new database file
-    mkdir -p "$TEMP_DB_DIR"
-
-    # Define the specific MitImpact database file to download
-    MITIMPACT_FILE="hg38_MitImpact${LATEST_DB_VERSION}.txt"
-
-    # Download the file
-    FILE_URL="${DB_BASE_URL}${MITIMPACT_FILE}"
-    curl -o "$TEMP_DB_DIR/$MITIMPACT_FILE" "$FILE_URL"
-    if [ $? -ne 0 ]; then
-        log "Failed to download $MITIMPACT_FILE. Exiting."
-        exit 3
-    fi
-    log "Downloaded $MITIMPACT_FILE successfully."
-
-    # Replace the old MitImpact file with the new one
-    log "Replacing old MitImpact file with the new version..."
-    mv -f "$TEMP_DB_DIR/$MITIMPACT_FILE" "$LOCAL_DB_DIR/$MITIMPACT_FILE"
-
-    # Update the local version file
-    log "Updating local MitImpact version to $LATEST_DB_VERSION."
-    sed -i "s/^MitImpact=.*/MitImpact=$LATEST_DB_VERSION/" "$LOCAL_VERSIONS_FILE"
-
-    log "MitImpact database update to version $LATEST_DB_VERSION completed successfully."
+    log "NOTICE: A new version of MitImpact ($LATEST_DB_VERSION) is available."
+    log "Due to licensing restrictions, please update it manually:"
+    log "1. Download raw data from: https://mitimpact.css-mendel.it/"
+    log "2. Run: bash scripts/mitimpact_format.sh <raw_file> > hg38_MitImpact${LATEST_DB_VERSION}.txt"
+    log "3. Move the file to: $LOCAL_DB_DIR"
+    
+   
 else
-    log "No database updates available."
+    log "Database version is up to date."
 fi
 
 # Step 4: Check for script updates
