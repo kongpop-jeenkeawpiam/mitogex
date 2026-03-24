@@ -136,10 +136,12 @@ RUN mkdir -p ${MITOGEX_DIR}/Software && \
 RUN cd ${MITOGEX_DIR}/Software && \
     wget -q https://github.com/broadinstitute/cromwell/releases/download/87/cromwell-87.jar
 
-# Download MitImpact Database
-RUN wget -q https://mitogex.com/database/annovar/hg38_MitImpact313.txt -O \
-    ${MITOGEX_DIR}/Software/annovar/humandb/hg38_MitImpact313.txt || \
-    echo "Warning: MitImpact database download failed (may require authentication)"
+# ==========================================
+# Install MitImpact Database
+# ==========================================
+# IMPORTANT: You must prepare 'hg38_MitImpact313.txt' using your standalone script
+# and place it in the same directory as this Dockerfile before building.
+COPY hg38_MitImpact313.txt ${MITOGEX_DIR}/Software/annovar/humandb/
 
 # Download scripts
 RUN cd ${MITOGEX_DIR} && \
