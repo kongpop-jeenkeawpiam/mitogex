@@ -123,11 +123,13 @@ RUN mkdir -p ${MITOGEX_DIR}/Software/mtdnaserver && \
     wget -q https://github.com/leklab/haplocheckCLI/raw/master/haplocheckCLI.jar
 
 # Install ANNOVAR
+# IMPORTANT: You must download 'annovar.latest.tar.gz' from ANNOVAR website 
+# and place it in the same directory as this Dockerfile before building.
+COPY annovar.latest.tar.gz /tmp/
 RUN mkdir -p ${MITOGEX_DIR}/Software && \
     cd ${MITOGEX_DIR}/Software && \
-    wget -q http://www.openbioinformatics.org/annovar/download/0wgxR2rIVP/annovar.latest.tar.gz && \
-    tar -xzf annovar.latest.tar.gz && \
-    rm annovar.latest.tar.gz && \
+    tar -xzf /tmp/annovar.latest.tar.gz && \
+    rm /tmp/annovar.latest.tar.gz && \
     mkdir -p annovar/humandb
 
 # Install Cromwell
