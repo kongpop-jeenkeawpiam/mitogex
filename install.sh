@@ -75,6 +75,32 @@ R --slave -e 'BiocManager::install("Repitools",force=TRUE)'
 mitogex_dir=$(pwd)
 mkdir ${mitogex_dir}/Software
 
+# ==========================================
+# Install ANNOVAR
+# ==========================================
+echo "Checking ANNOVAR..."
+ANNOVAR_FILE="${mitogex_dir}/Software/annovar.latest.tar.gz"
+
+if [ ! -f "$ANNOVAR_FILE" ]; then
+    echo ""
+    echo "------------------------------------------------------------"
+    echo "NOTICE: ANNOVAR requires personal registration."
+    echo "1. Please register at: https://www.openbioinformatics.org/annovar/annovar_download_form.php"
+    echo "2. Download 'annovar.latest.tar.gz' from the link in your email."
+    echo "3. Place the file in: ${mitogex_dir}/Software/"
+    echo "------------------------------------------------------------"
+    echo ""
+    while [ ! -f "$ANNOVAR_FILE" ]; do
+        read -p "Once you have placed the file in the folder, press [Enter] to continue (or Ctrl+C to abort)..."
+    done
+fi
+
+cd ${mitogex_dir}/Software/
+echo "Extracting ANNOVAR..."
+tar -xvf annovar.latest.tar.gz 
+
+cd ${mitogex_dir}/Software/
+
 #Install bwa-mem2
 mkdir ${mitogex_dir}/Software/bwa-mem2
 cd ${mitogex_dir}/Software/bwa-mem2
@@ -113,10 +139,6 @@ mkdir ${mitogex_dir}/Software/mtdnaserver
 cd ${mitogex_dir}/Software/mtdnaserver
 wget https://github.com/leklab/haplocheckCLI/raw/master/haplocheckCLI.jar
 
-#Install ANNOVAR
-cd ${mitogex_dir}/Software/
-wget http://www.openbioinformatics.org/annovar/download/0wgxR2rIVP/annovar.latest.tar.gz
-tar -xvf annovar.latest.tar.gz && rm annovar.latest.tar.gz
 
 #Install Cromwell for WDL
 wget https://github.com/broadinstitute/cromwell/releases/download/87/cromwell-87.jar
