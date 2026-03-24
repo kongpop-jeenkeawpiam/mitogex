@@ -49,7 +49,7 @@ ANNOVAR is free only for personal, academic, and non-profit use.
 
 **MitImpact 3D Database**
 The MitImpact 3D database requires manual formatting to be compatible with the ANNOVAR annotation tool used in MitoGEx.
-1. Download Raw Data: Download the latest MitImpact database (Tab-separated format) directly from the [Official MitImpact website](https://mitimpact.mcb2lab.org/cdn/MitImpact_db_3.1.3.txt.zip).
+1. Download Raw Data: Download the latest MitImpact database (Tab-separated format) directly from the [Official MitImpact website](https://mitimpact.mcb2lab.org/) then click Download -> MitImpact 3.1.3.
 2. Format the Data: Use the provided standalone script to remove restricted identifiers and reformat the columns for ANNOVAR compatibility.
 
 ```bash
