@@ -40,6 +40,7 @@ MitoGEx automates sequencing data analysis using:
 ---
   ## ⚠️ Data Preparation (Required)
 Due to licensing restrictions, some third-party databases and software cannot be redistributed with MitoGEx. Users must obtain these files personally for academic or non-profit research purposes.
+
 **ANNOVAR Installation**
 ANNOVAR is free only for personal, academic, and non-profit use.
 1. Registration: [Download ANNOVAR here](https://www.openbioinformatics.org/annovar/annovar_download_form.php).
