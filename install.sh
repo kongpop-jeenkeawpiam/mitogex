@@ -198,14 +198,11 @@ wget https://mitogex.com/references/chrM.zip
 unzip chrM.zip && rm chrM.zip
 mv chrM/ ${mitogex_dir}/Software/References/
 
-#Download MitImpact Database
-wget https://mitogex.com/database/annovar/hg38_MitImpact313.txt
-mv hg38_MitImpact313.txt ${mitogex_dir}/Software/annovar/humandb/
 
 #Download scripts
 wget https://mitogex.com/scripts/scripts.zip
 unzip scripts.zip && rm scripts.zip
-
+mv scripts/ ${mitogex_dir}/Software/
 
 cd ${mitogex_dir}
 wget https://mitogex.com/lib.zip
