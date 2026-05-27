@@ -5,7 +5,6 @@
 package com.mitogex;
 import java.io.*;
 import java.net.HttpURLConnection;
-import javax.swing.JOptionPane;
 /**
  *
  * @author mitogex
@@ -66,15 +65,17 @@ writer.append(CRLF).append(relativePath).append(CRLF).flush();
         int responseCode = connection.getResponseCode();
         StringBuilder response = new StringBuilder();
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                responseCode == 200 ? connection.getInputStream() : connection.getErrorStream()))) {
-            String line;
-            while ((line = in.readLine()) != null) {
-                response.append(line).append("\n");
+        InputStream responseStream = responseCode == 200 ? connection.getInputStream() : connection.getErrorStream();
+        if (responseStream != null) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(responseStream))) {
+                String line;
+                while ((line = in.readLine()) != null) {
+                    response.append(line).append("\n");
+                }
             }
         }
 
-     String full = response.toString().trim();
+        String full = response.toString().trim();
         if (responseCode == 200 && full.contains("https://")) {
             int urlStart = full.indexOf("https://");
             if (urlStart != -1) {
@@ -82,12 +83,6 @@ writer.append(CRLF).append(relativePath).append(CRLF).flush();
             }
         }
 
-        // ❌ Show error to user if upload failed
-        JOptionPane.showMessageDialog(null,
-                response.toString(),
-                "Upload Failed",
-                JOptionPane.ERROR_MESSAGE);
-
-        return null;
+        throw new IOException("Upload failed with HTTP " + responseCode + ": " + full);
     }
 }

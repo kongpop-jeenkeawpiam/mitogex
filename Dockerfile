@@ -169,7 +169,14 @@ RUN mkdir -p ${MITOGEX_DIR}/Software/file_log \
     touch ${MITOGEX_DIR}/local_versions.txt \
           ${MITOGEX_DIR}/update.log && \
     chmod -R u+rwX,g+rwX,o+rX ${MITOGEX_DIR} \
-                 /tmp/runtime-root
+                 /tmp/runtime-root && \
+    chmod -R a+rwX ${MITOGEX_DIR}/Software/file_log \
+                   ${MITOGEX_DIR}/.cache \
+                   ${MITOGEX_DIR}/.config \
+                   ${MITOGEX_DIR}/.java \
+                   /tmp/runtime-root && \
+    chmod a+rw ${MITOGEX_DIR}/local_versions.txt \
+                ${MITOGEX_DIR}/update.log
                  
 # Make scripts executable (don't change other permissions)
 RUN if [ -d ${MITOGEX_DIR}/Software/scripts ]; then chmod +x ${MITOGEX_DIR}/Software/scripts/*.sh; fi && \

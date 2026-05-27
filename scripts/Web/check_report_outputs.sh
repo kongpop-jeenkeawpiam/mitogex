@@ -22,10 +22,10 @@ require_glob() {
 }
 
 require_file "$RESULTS_DIR/Web/index.html"
-require_file "$RESULTS_DIR/Haplogroup/haplogroup.html"
+require_file "$RESULTS_DIR/Web/haplogroup.html"
 require_file "$RESULTS_DIR/Phylogenetic/tree.html"
 require_glob "$RESULTS_DIR/Web/sample_*.html"
-require_glob "$RESULTS_DIR/ANNOVAR/variants_*.html"
+require_glob "$RESULTS_DIR/Web/variants_*.html"
 
 if [ "$MISSING" -ne 0 ]; then
     exit 1

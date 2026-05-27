@@ -21,9 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -215,7 +212,6 @@ public class new_proj extends javax.swing.JFrame {
         //    String concat = workingDir.concat("/Software/uploaded/R1.fastq.gz");
         String uploaded_file = "Files are uploaded in the folder: ";
         String concat_upload = uploaded_file.concat(concat);
-        String file_type = "";
         System.out.println(concat);
         JFileChooser chooser = new JFileChooser();
 
@@ -230,21 +226,20 @@ public class new_proj extends javax.swing.JFrame {
             System.out.println("Selected Directory: "
                     + chooser.getCurrentDirectory());
 
-            File[] list_files = file.listFiles();
-            if (list_files != null) {
-                for (File file2 : list_files) {
-                    if (file2.isFile()) {
-                        String fileName = file2.getName();
-                        if (fileName.endsWith(".gz")) {
-                            containsGz = true;
-                        } else if (fileName.endsWith(".bam")) {
-                            containsBam = true;
-                        } else if (fileName.endsWith(".fasta")) {
-                            containsFasta = true;
-                        }
-                    }
-                }
+            InputDirectorySummary inputSummary;
+            try {
+                inputSummary = InputDirectorySummary.scan(file.toPath());
+            } catch (IOException e) {
+                Logger.getLogger(new_proj.class.getName()).log(Level.SEVERE, "Failed to scan selected directory", e);
+                JOptionPane.showMessageDialog(null,
+                        "Failed to scan selected directory: " + e.getMessage(),
+                        "Select directory",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            containsGz = inputSummary.containsGz();
+            containsBam = inputSummary.containsBam();
+            containsFasta = inputSummary.containsFasta();
 
             // Print the detected files for debugging
             if (containsGz) {
@@ -297,21 +292,8 @@ public class new_proj extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null,
                             "Directory selected.");
 
-                    if (file_type.equals("fasta")) {
-                        File sourceDir = new File(currentFileBeingEdited);
-                        File destinationDir = new File(concat);
-                        File[] files = sourceDir.listFiles();
-                        for (File f : files) {
-                            Path sourcePath = Paths.get(sourceDir.getAbsolutePath() + "//" + f.getName());
-                            Path destinationPath = Paths.get(destinationDir.getAbsolutePath() + "//" + f.getName());
-
-                            try {
-                                Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-                            } catch (IOException e) {
-                                //moving file failed.
-
-                            }
-                        }
+                    if (containsFasta) {
+                        inputSummary.copyFastaFiles(Path.of(currentFileBeingEdited), Path.of(concat));
                     }
 
 //                System.out.println(path_concat);
@@ -1288,7 +1270,7 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
 
 //    String fastTreeFilterFieldValue = (fastTreeFilterField.getText().trim().isEmpty()) 
 //                                       ? fastTreeFilterField.getText().trim() : "30";
-            List<String> fastTreeCommand = List.of(fastTreeScript, new_workingDir, bwaThreadsValue);
+            List<String> fastTreeCommand = List.of(fastTreeScript, new_workingDir, bwaThreadsValue, jTextField2.getText().trim());
 
             logWriter.write("Running fastTree command: " + String.join(" ", fastTreeCommand));
             logWriter.newLine();

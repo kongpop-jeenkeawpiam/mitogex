@@ -468,15 +468,15 @@ private void initBrowser() {
 }
 
     private void initReportNavigationListeners() {
-        setReportClick(jLabel3, sample -> showReport("FastQC/" + sample, sample + "_1_fastqc.html", "FastQC HTML file not found"));
-        setReportClick(jLabel4, sample -> showReport("FastQC/" + sample, sample + "_2_fastqc.html", "FastQC HTML file not found"));
-        setReportClick(jLabel1, sample -> showReport("MultiQC", "multiqc_report.html", "MultiQC HTML file not found"));
-        setReportClick(jLabel2, sample -> showReport("Fastp/" + sample, sample + ".html", "Fastp HTML file not found"));
-        setReportClick(jLabel7, sample -> showReport("AlignmentQuality/" + sample, "qualimapReport.html", "Alignment Quality file not found"));
-        setReportClick(jLabel8, sample -> showReport("MultiSample_QC", "multisampleBamQcReport.html", "Multi-Sample Quality file not found"));
-        setReportClick(jLabel5, sample -> showReport("Web", "variants_" + sample + ".html", "Variants file not found"));
-        setReportClick(jLabel6, sample -> showReport("Web", "haplogroup.html", "Haplogroup file not found"));
-        setReportClick(jLabel9, sample -> showReport("Phylogenetic", "tree.png", "Tree file not found"));
+        setReportClick(jLabel3, sample -> showReport(ReportPaths.FASTQC_DIR + "/" + sample, ReportPaths.fastqcRead1(sample), "FastQC HTML file not found"));
+        setReportClick(jLabel4, sample -> showReport(ReportPaths.FASTQC_DIR + "/" + sample, ReportPaths.fastqcRead2(sample), "FastQC HTML file not found"));
+        setReportClick(jLabel1, sample -> showReport(ReportPaths.MULTIQC_DIR, ReportPaths.MULTIQC_REPORT, "MultiQC HTML file not found"));
+        setReportClick(jLabel2, sample -> showReport(ReportPaths.FASTP_DIR + "/" + sample, ReportPaths.fastpReport(sample), "Fastp HTML file not found"));
+        setReportClick(jLabel7, sample -> showReport(ReportPaths.ALIGNMENT_QUALITY_DIR + "/" + sample, ReportPaths.QUALIMAP_REPORT, "Alignment Quality file not found"));
+        setReportClick(jLabel8, sample -> showReport(ReportPaths.MULTI_SAMPLE_QC_DIR, ReportPaths.MULTI_SAMPLE_QC_REPORT, "Multi-Sample Quality file not found"));
+        setReportClick(jLabel5, sample -> showReport(ReportPaths.WEB_DIR, ReportPaths.variantsReport(sample), "Variants file not found"));
+        setReportClick(jLabel6, sample -> showReport(ReportPaths.WEB_DIR, ReportPaths.HAPLOGROUP_REPORT, "Haplogroup file not found"));
+        setReportClick(jLabel9, sample -> showReport(ReportPaths.PHYLOGENETIC_DIR, ReportPaths.TREE_REPORT, "Tree file not found"));
     }
 
     private void setReportClick(JLabel label, Consumer<String> action) {
@@ -536,6 +536,7 @@ private void initBrowser() {
                 }
 
                 projectTitle = projectTitle.trim().replaceAll("[^A-Za-z0-9_\\-]", "_");
+                UploadConfig uploadConfig = UploadConfig.fromSystemEnvironment();
 
                 RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
                 String new_workingDir = paths.appRoot().toString();
@@ -569,26 +570,17 @@ private void initBrowser() {
                  final String finalProjectTitle = projectTitle;
                 final Path baseDir = htmlDir.toPath();
                 List<File> uploadedFiles = new ArrayList<>();
- 
-                Files.walk(baseDir)
-                        .filter(Files::isRegularFile)
-                        .filter(p -> {
-                            String name = p.toString().toLowerCase();
-                            return name.endsWith(".html") || name.endsWith(".htm") || name.endsWith(".txt") ||
-                                    name.endsWith(".pdf") || name.endsWith(".css") || name.endsWith(".gif") ||
-                                    name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") ||
-                                    name.endsWith(".js");
-                        })
-                        .forEach(filePath -> {
-                            try {
-                                String relativePath = baseDir.relativize(filePath).toString().replace("\\", "/");
-                                File htmlFile = filePath.toFile();
-                                HTMLUploader.uploadReport(htmlFile, finalProjectTitle, sessionId, relativePath);
-                                uploadedFiles.add(htmlFile);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        });
+
+                List<Path> uploadPaths = UploadFiles.collectUploadFiles(baseDir);
+                for (Path filePath : uploadPaths) {
+                    String relativePath = UploadFiles.relativeUploadPath(baseDir, filePath);
+                    File htmlFile = filePath.toFile();
+                    String uploadedUrl = HTMLUploader.uploadReport(htmlFile, finalProjectTitle, sessionId, relativePath, uploadConfig);
+                    if (uploadedUrl == null || uploadedUrl.trim().isEmpty()) {
+                        throw new IOException("Upload did not return a share URL for " + relativePath);
+                    }
+                    uploadedFiles.add(htmlFile);
+                }
 
                 if (uploadedFiles.size() < 5) {
                     // Show a message dialog to inform the user

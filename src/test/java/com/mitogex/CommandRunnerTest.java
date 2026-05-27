@@ -26,6 +26,6 @@ class CommandRunnerTest {
 
         assertEquals(0, result.exitCode());
         assertFalse(result.timedOut());
-        assertEquals("literal;$(not-a-command)", output.toString());
+        assertEquals("literal;$(not-a-command)" + System.lineSeparator(), output.toString());
     }
 }

@@ -1,14 +1,16 @@
 #!/bin/bash
 set -eo pipefail  # Exit script if any command fails
 
-cd $1
+project_title="${3:?Project title is required}"
+
+cd "$1"
 
 if [ -d "$1/Results/Phylogenetic/" ]
 then
     echo "Directory $1/Results/Phylogenetic/ exists."
 else
     echo "Directory $1/Results/Phylogenetic/ does not exists, Creating Directory..."
-    mkdir $1/Results/Phylogenetic/
+    mkdir -p "$1/Results/Phylogenetic/"
 fi
 # Safely count the number of FASTA files in Haplogroup directory
 num_fasta_files=$(find "$1/Results/Haplogroup/" -maxdepth 1 -type f -name "*.fasta" | wc -l)
@@ -34,6 +36,7 @@ else
         # Find Conda base path and activate the environment
         CONDA_PATH=$(conda info --base)
         if [ -f "$CONDA_PATH/etc/profile.d/conda.sh" ]; then
+            # shellcheck source=/dev/null
             source "$CONDA_PATH/etc/profile.d/conda.sh"
         else
             echo "Conda not found!"
