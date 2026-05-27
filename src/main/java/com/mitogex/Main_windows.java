@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -65,6 +65,7 @@ private WebEngine webEngine;
      */
     public Main_windows() {
         initComponents();
+        initReportNavigationListeners();
         initBrowser();
         populateComboBoxWithDirectories();
         setLocationRelativeTo(null);
@@ -415,9 +416,8 @@ private void initBrowser() {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // Get the working directory and modify it
-        String workingDir = System.getProperty("user.dir");
-        String newWorkingDir = workingDir.replace("target", "");
-        String pathProgram = newWorkingDir + "/Results/";
+        RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
+        String pathProgram = paths.resultsDir().toString() + "/";
         String selectedSample = (String) jComboBox1.getSelectedItem();
         if (selectedSample != null && !selectedSample.equals("Select...")) {
             // Define the paths to check for each program
@@ -460,150 +460,52 @@ private void initBrowser() {
                 }
             }
 
-            // Add MouseListener to jLabel1 to display FastQC_1
-            jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (fastQCDir.exists()) {
-                        File fastQCFile = new File(fastQCDir, selectedSample + "_1_fastqc.html");
-                       
-                        if (fastQCFile.exists()) {
-                           displayHTMLInPanel(toFixedFileURL(fastQCFile));
-
-                        } else {
-                            System.out.println("FastQC HTML file not found: " + fastQCFile.getPath());
-                        }
-                    }
-                }
-            });
-
-            // Add MouseListener to jLabel3 to display FastQC_2
-            jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (fastQCDir2.exists()) {
-                        File fastQCFile2 = new File(fastQCDir2, selectedSample + "_2_fastqc.html");
-                        if (fastQCFile2.exists()) {
-                            displayHTMLInPanel(toFixedFileURL(fastQCFile2));
-                        } else {
-                            System.out.println("FastQC HTML file not found: " + fastQCFile2.getPath());
-                        }
-                    }
-                }
-            });
-
-            // Add MouseListener to jLabel4 to display MultiQC
-            jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (multiQCDir.exists()) {
-                        File multiQCFile = new File(multiQCDir, "multiqc_report.html");
-                        if (multiQCFile.exists()) {
-                            displayHTMLInPanel(toFixedFileURL(multiQCFile));
-                        } else {
-                            System.out.println("multiQC HTML file not found: " + multiQCFile.getPath());
-                        }
-                    }
-                }
-            });
-            
-            // Add MouseListener to jLabel4 to display Fastp
-            jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (fastpDir.exists()) {
-                        File fastpFile = new File(fastpDir, selectedSample + ".html");
-                        if (fastpFile.exists()) {
-                            displayHTMLInPanel(toFixedFileURL(fastpFile));
-
-                        } else {
-                            System.out.println("Fastp HTML file not found: " + fastpFile.getPath());
-                        }
-                    }
-                }
-            });
-            
-            // Add MouseListener to jLabel7 to display Alignment Quality
-            jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (qualimapDir.exists()) {
-                        File qualimapFile = new File(qualimapDir, "qualimapReport.html");
-                        if (qualimapFile.exists()) {
-                            displayHTMLInPanel(toFixedFileURL(qualimapFile));
-                        } else {
-                            System.out.println("Alignment Quality file not found: " + qualimapFile.getPath());
-                        }
-                    }
-                }
-            });
-            
-            // Add MouseListener to jLabel7 to display Alignment Quality
-            jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (multiQualimapDir.exists()) {
-                        File multiQualimapFile = new File(multiQualimapDir, "multisampleBamQcReport.html");
-                        if (multiQualimapFile.exists()) {
-                           displayHTMLInPanel(toFixedFileURL(multiQualimapFile));
-                        } else {
-                            System.out.println("Multi-Sample Quality file not found: " + multiQualimapFile.getPath());
-                        }
-                    }
-                }
-            });
-            
-            // Add MouseListener to jLabel5 to display Variants
-            jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (variantsDir.exists()) {
-                        File variantsFile = new File(variantsDir, "variants_"+selectedSample+".html");
-                        if (variantsFile.exists()) {
-                            displayHTMLInPanel(toFixedFileURL(variantsFile));
-                        } else {
-                            System.out.println("Variants file not found: " + variantsFile.getPath());
-                        }
-                    }
-                }
-            });
-            
-            // Add MouseListener to jLabel5 to display Variants
-            jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (haplogroupDir.exists()) {
-                        File haplogroupFile = new File(haplogroupDir, "haplogroup.html");
-                        if (haplogroupFile.exists()) {
-                            displayHTMLInPanel(toFixedFileURL(haplogroupFile));
-                        } else {
-                            System.out.println("Haplogroup file not found: " + haplogroupFile.getPath());
-                        }
-                    }
-                }
-            });
-            
-            // Add MouseListener to jLabel5 to display Variants
-            jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
-                @Override
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (treeDir.exists()) {
-                        File treeFile = new File(treeDir, "tree.png");
-                        if (treeFile.exists()) {
-                            displayHTMLInPanel(toFixedFileURL(treeFile));
-                        } else {
-                            System.out.println("Tree file not found: " + treeFile.getPath());
-                        }
-                    }
-                }
-            });
-            
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private String toFixedFileURL(File file) {
     return "file:///" + file.getAbsolutePath().replace("\\", "/");
 }
+
+    private void initReportNavigationListeners() {
+        setReportClick(jLabel3, sample -> showReport("FastQC/" + sample, sample + "_1_fastqc.html", "FastQC HTML file not found"));
+        setReportClick(jLabel4, sample -> showReport("FastQC/" + sample, sample + "_2_fastqc.html", "FastQC HTML file not found"));
+        setReportClick(jLabel1, sample -> showReport("MultiQC", "multiqc_report.html", "MultiQC HTML file not found"));
+        setReportClick(jLabel2, sample -> showReport("Fastp/" + sample, sample + ".html", "Fastp HTML file not found"));
+        setReportClick(jLabel7, sample -> showReport("AlignmentQuality/" + sample, "qualimapReport.html", "Alignment Quality file not found"));
+        setReportClick(jLabel8, sample -> showReport("MultiSample_QC", "multisampleBamQcReport.html", "Multi-Sample Quality file not found"));
+        setReportClick(jLabel5, sample -> showReport("Web", "variants_" + sample + ".html", "Variants file not found"));
+        setReportClick(jLabel6, sample -> showReport("Web", "haplogroup.html", "Haplogroup file not found"));
+        setReportClick(jLabel9, sample -> showReport("Phylogenetic", "tree.png", "Tree file not found"));
+    }
+
+    private void setReportClick(JLabel label, Consumer<String> action) {
+        for (java.awt.event.MouseListener listener : label.getMouseListeners()) {
+            label.removeMouseListener(listener);
+        }
+        label.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                String selectedSample = (String) jComboBox1.getSelectedItem();
+                if (selectedSample != null && !selectedSample.equals("Select...")) {
+                    action.accept(selectedSample);
+                }
+            }
+        });
+    }
+
+    private void showReport(String relativeDirectory, String fileName, String missingMessage) {
+        File file = RuntimePaths.fromCurrentWorkingDirectory()
+                .resultsDir()
+                .resolve(relativeDirectory)
+                .resolve(fileName)
+                .toFile();
+        if (file.exists()) {
+            displayHTMLInPanel(toFixedFileURL(file));
+        } else {
+            System.out.println(missingMessage + ": " + file.getPath());
+        }
+    }
 
     
     private void jComboBox1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jComboBox1PropertyChange
@@ -635,8 +537,8 @@ private void initBrowser() {
 
                 projectTitle = projectTitle.trim().replaceAll("[^A-Za-z0-9_\\-]", "_");
 
-                String workingDir = System.getProperty("user.dir");
-                String new_workingDir = workingDir.replaceAll("target", "");
+                RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
+                String new_workingDir = paths.appRoot().toString();
                 String path_web = new_workingDir + "/Results/Web_online/";
 
                 // Run bash script
@@ -787,11 +689,10 @@ public void ensureJavaFXIsInitialized() {
     }
 
     private void populateComboBoxWithDirectories() {
-        String workingDir = System.getProperty("user.dir");
-        String newWorkingDir = workingDir.replace("target", "");
-        String pathProgram = newWorkingDir + "/Results/";
+        RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
+        String pathProgram = paths.resultsDir().toString() + "/";
 
-        System.out.println("Working directory: " + workingDir);
+        System.out.println("Working directory: " + paths.appRoot());
         System.out.println("Path to program: " + pathProgram);
 
         String[] programs = {"FastQC", "Fastp", "Qualimap2", "MultiQC", "Variants", "Haplogroup"};

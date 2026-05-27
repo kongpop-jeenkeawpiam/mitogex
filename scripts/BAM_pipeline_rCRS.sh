@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # Exit script if any command fails
+set -eo pipefail  # Exit script if any command fails
 
 echo "Starting the pipeline..."
 
@@ -321,7 +321,7 @@ else
 
     # Check if the tree file was generated before proceeding
     if [ -f "$contree_path" ]; then
-        chmod 777 "$contree_path"
+        chmod 644 "$contree_path"
 
         # Find Conda base path and activate the environment
         CONDA_PATH=$(conda info --base)
@@ -367,14 +367,4 @@ for FILE in "$1/Results/ANNOVAR"/*.hg38_multianno_clean.txt; do
     bash $1/Software/scripts/Web/web_variants.sh "${1}" "${BASENAME}" > "$1/Results/ANNOVAR/variants_${BASENAME}.html"
 done
 
-
-    
-done
  bash $1/Software/scripts/Web/web_haplogroup.sh "${1}" > "$1/Results/Haplogroup/haplogroup.html"
-
-
-
-
-
-
-done

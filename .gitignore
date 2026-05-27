@@ -1,0 +1,6 @@
+target/
+.worktrees/
+worktrees/
+.mitogex-upload.properties
+*.log
+/docs/

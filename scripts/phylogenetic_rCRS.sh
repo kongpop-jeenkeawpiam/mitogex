@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # Exit script if any command fails
+set -eo pipefail  # Exit script if any command fails
 
 cd $1
 
@@ -29,7 +29,7 @@ else
 
     # Check if the tree file was generated before proceeding
     if [ -f "$contree_path" ]; then
-        chmod 777 "$contree_path"
+        chmod 644 "$contree_path"
 
         # Find Conda base path and activate the environment
         CONDA_PATH=$(conda info --base)

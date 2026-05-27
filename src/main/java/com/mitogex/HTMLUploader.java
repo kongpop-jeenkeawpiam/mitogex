@@ -5,7 +5,6 @@
 package com.mitogex;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import javax.swing.JOptionPane;
 /**
  *
@@ -13,12 +12,14 @@ import javax.swing.JOptionPane;
  */
 public class HTMLUploader {
     public static String uploadReport(File htmlFile, String projectTitle, String sessionId, String relativePath) throws Exception {
+        return uploadReport(htmlFile, projectTitle, sessionId, relativePath, UploadConfig.fromSystemEnvironment());
+    }
+
+    public static String uploadReport(File htmlFile, String projectTitle, String sessionId, String relativePath, UploadConfig config) throws Exception {
         String boundary = Long.toHexString(System.currentTimeMillis());
         String CRLF = "\r\n";
-        String token = "bf83079f-7262-4f2e-9ea4-fd0ab19c222b";
 
-        URL url = new URL("https://mitogex.com/upload.php");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) config.uploadUrl().openConnection();
         connection.setDoOutput(true);
         connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 
@@ -29,7 +30,7 @@ public class HTMLUploader {
             // Token
             writer.append("--").append(boundary).append(CRLF);
             writer.append("Content-Disposition: form-data; name=\"token\"").append(CRLF);
-            writer.append(CRLF).append(token).append(CRLF).flush();
+            writer.append(CRLF).append(config.token()).append(CRLF).flush();
 
             // Project title
             writer.append("--").append(boundary).append(CRLF);

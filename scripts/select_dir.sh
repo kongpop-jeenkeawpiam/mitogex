@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 now=$(date '+%d.%m.%Y.time.%H.%M.%S')
 result_file=$1/Results/results.html
@@ -7,25 +8,25 @@ fasta_check=$1/Results/Fasta/
 
 # Check if the directory exists, and if not, create it
 if [ ! -d "$1/Software/file_log" ]; then
-  mkdir -p $1/Software/file_log
+  mkdir -p "$1/Software/file_log"
   echo "Directory $1/Software/file_log created."
 fi
 
 # Check and remove log files only if they exist
-if [ -f $1/Software/file_log/file_log.txt ]; then
-  rm -r $1/Software/file_log/file_log.txt
+if [ -f "$1/Software/file_log/file_log.txt" ]; then
+  rm -r "$1/Software/file_log/file_log.txt"
 fi
 
-if [ -f $1/Software/file_log/all_file_log.txt ]; then
-  rm -r $1/Software/file_log/all_file_log.txt
+if [ -f "$1/Software/file_log/all_file_log.txt" ]; then
+  rm -r "$1/Software/file_log/all_file_log.txt"
 fi
 
-if [ -f $1/Software/file_log/file_log_R1.txt ]; then
-  rm -r $1/Software/file_log/file_log_R1.txt
+if [ -f "$1/Software/file_log/file_log_R1.txt" ]; then
+  rm -r "$1/Software/file_log/file_log_R1.txt"
 fi
 
-if [ -f $1/Software/file_log/file_log_R2.txt ]; then
-  rm -r $1/Software/file_log/file_log_R2.txt
+if [ -f "$1/Software/file_log/file_log_R2.txt" ]; then
+  rm -r "$1/Software/file_log/file_log_R2.txt"
 fi
 
 

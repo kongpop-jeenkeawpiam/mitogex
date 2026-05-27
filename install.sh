@@ -178,7 +178,7 @@ cd ${mitogex_dir}/Software/haplogrep3
 wget https://github.com/genepi/haplogrep3/releases/download/v3.2.1/haplogrep3-3.2.1-linux.zip
 unzip haplogrep3-3.2.1-linux.zip && rm haplogrep3-3.2.1-linux.zip
 ${mitogex_dir}/Software/haplogrep3/haplogrep3 trees
-chmod 777 ${mitogex_dir}/Software/haplogrep3/trees/phylotree-fu-rcrs/1.2/tree.yaml
+chmod 644 "${mitogex_dir}/Software/haplogrep3/trees/phylotree-fu-rcrs/1.2/tree.yaml"
 #Install haplocheckCLI
 mkdir ${mitogex_dir}/Software/mtdnaserver
 cd ${mitogex_dir}/Software/mtdnaserver

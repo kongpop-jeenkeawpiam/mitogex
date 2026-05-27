@@ -20,10 +20,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -208,8 +209,8 @@ public class new_proj extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String workingDir = System.getProperty("user.dir");
-        String new_workingDir = workingDir.replaceAll("target", "");
+        RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
+        String new_workingDir = paths.appRoot().toString();
         String concat = new_workingDir.concat("/Results/Fasta");
         //    String concat = workingDir.concat("/Software/uploaded/R1.fastq.gz");
         String uploaded_file = "Files are uploaded in the folder: ";
@@ -338,8 +339,8 @@ public class new_proj extends javax.swing.JFrame {
             return; // Exit early if any field is empty or if jTextField1 still has the default text
         }
 
-        String workingDir = System.getProperty("user.dir");
-        String new_workingDir = workingDir.replaceAll("target", "");
+        RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
+        String new_workingDir = paths.appRoot().toString();
         String path_Program = new_workingDir.concat("/Software/scripts/./pipeline_rCRS.sh");
         String path_Program2 = new_workingDir.concat("/Software/scripts/./BAM_pipeline_rCRS.sh");
         String path_folder = "All process are successful\nThe result files are available at: " + new_workingDir + "/Results";
@@ -1006,8 +1007,8 @@ public class new_proj extends javax.swing.JFrame {
 
         
        
-        String workingDir = System.getProperty("user.dir");
-        String new_workingDir = workingDir.replaceAll("target", "");
+        RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
+        String new_workingDir = paths.appRoot().toString();
         String path_Program = new_workingDir + "/Software/file_log/all_file_log.txt";
         String path_output = new_workingDir + "/Results/Fastp/";
         String logDirPath = new_workingDir + "/Logs/";
@@ -1035,11 +1036,11 @@ public class new_proj extends javax.swing.JFrame {
                 cores = "4";
             }
 
-            String fastqcCommand = String.format("%s %s %s", fastqcScript, new_workingDir, cores);
-            logWriter.write("Running FastQC command: " + fastqcCommand);
+            List<String> fastqcCommand = List.of(fastqcScript, new_workingDir, cores);
+            logWriter.write("Running FastQC command: " + String.join(" ", fastqcCommand));
             logWriter.newLine();
 
-            boolean success = runCommand(fastqcCommand, new_workingDir, logWriter);
+            boolean success = runCommand(fastqcCommand, Path.of(new_workingDir), logWriter);
             if (success) {
                 SwingUtilities.invokeLater(() -> fastQCCheck.setEnabled(false));
             }
@@ -1096,17 +1097,19 @@ public class new_proj extends javax.swing.JFrame {
                 System.out.println("OutputR2: " + outputR2);
 
                 // Build and run fastp command
-                String fastpCommand = String.format(
-                        "fastp -q %s -u %s -w %s -l %s -i %s -I %s -o %s -O %s --verbose --html %s.html --json %s.json",
-                        fastpThreshold, fastpUnqualifiedValue, fastpCoreValue, fastpReadLengthValue,
-                        r1Path, r2Path, outputR1, outputR2, sampleName, sampleName
+                List<String> fastpCommand = List.of(
+                        "fastp", "-q", fastpThreshold, "-u", fastpUnqualifiedValue,
+                        "-w", fastpCoreValue, "-l", fastpReadLengthValue,
+                        "-i", r1Path, "-I", r2Path,
+                        "-o", outputR1, "-O", outputR2,
+                        "--verbose", "--html", sampleName + ".html", "--json", sampleName + ".json"
                 );
 
-                System.out.println("Running command: " + fastpCommand);
-                logWriter.write("Running command: " + fastpCommand);
+                System.out.println("Running command: " + String.join(" ", fastpCommand));
+                logWriter.write("Running command: " + String.join(" ", fastpCommand));
                 logWriter.newLine();
                 String sampleDir = sampleFolder.getAbsolutePath();
-                boolean success = runCommand(fastpCommand, sampleDir, logWriter);
+                boolean success = runCommand(fastpCommand, Path.of(sampleDir), logWriter);
                 if (!success) {
                     allSuccess = false;
                 }
@@ -1125,12 +1128,12 @@ public class new_proj extends javax.swing.JFrame {
 
             String userInputDir = jTextField1.getText(); // From Browse
 
-            String bwaCommand = String.format("%s %s %s %s %s", bwaScript, new_workingDir, bwaThreadsValue, userInputDir, bwaMinimumScoreValue);
+            List<String> bwaCommand = List.of(bwaScript, new_workingDir, bwaThreadsValue, userInputDir, bwaMinimumScoreValue);
 
-            logWriter.write("Running BWA command: " + bwaCommand);
+            logWriter.write("Running BWA command: " + String.join(" ", bwaCommand));
             logWriter.newLine();
 
-            boolean bwaSuccess = runCommand(bwaCommand, new_workingDir, logWriter);
+            boolean bwaSuccess = runCommand(bwaCommand, Path.of(new_workingDir), logWriter);
             if (bwaSuccess) {
                 SwingUtilities.invokeLater(() -> bwaCheck.setEnabled(false));
             }
@@ -1160,13 +1163,12 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
             }
             String bamInputPath = containsBam ? jTextField1.getText().trim() : new_workingDir + "/Results/BAM_rCRS";
 
-            String sortCommand = String.format("%s %s %s \"%s\" \"%s\" \"%s\"",
-                    sortScript, new_workingDir, bwaThreadsValue, gatkMemoryFieldValue, projectTitle, bamInputPath);
+            List<String> sortCommand = List.of(sortScript, new_workingDir, bwaThreadsValue, gatkMemoryFieldValue, projectTitle, bamInputPath);
 
-            logWriter.write("Running Sort & Add Groups command: " + sortCommand);
+            logWriter.write("Running Sort & Add Groups command: " + String.join(" ", sortCommand));
             logWriter.newLine();
 
-    boolean sortSuccess = runCommand(sortCommand, new_workingDir, logWriter);
+    boolean sortSuccess = runCommand(sortCommand, Path.of(new_workingDir), logWriter);
     if (sortSuccess) {
         SwingUtilities.invokeLater(() -> gatkCheck.setEnabled(false));
     }
@@ -1186,12 +1188,12 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
                     ? "Main_analysis_pipeline_output/Align"
                     : "Sort_rCRS";
 
-            String qualimapCommand = String.format("%s %s %s %s", qualimapScript, new_workingDir, qualimapThreadsValue, bamDir);
+            List<String> qualimapCommand = List.of(qualimapScript, new_workingDir, qualimapThreadsValue, bamDir);
 
-            logWriter.write("Running Qualimap command: " + qualimapCommand);
+            logWriter.write("Running Qualimap command: " + String.join(" ", qualimapCommand));
             logWriter.newLine();
 
-            boolean qualimapSuccess = runCommand(qualimapCommand, new_workingDir, logWriter);
+            boolean qualimapSuccess = runCommand(qualimapCommand, Path.of(new_workingDir), logWriter);
             if (qualimapSuccess) {
                 SwingUtilities.invokeLater(() -> {
                     qualimapCheck.setEnabled(false);
@@ -1232,13 +1234,12 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
 //            String mutect2FilterFieldValue = (mutect2FilterField.getText().trim().isEmpty())
 //                    ? mutect2FilterField.getText().trim() : "30";
 
-            String mutect2Command = String.format("%s %s %s ",
-                    mutect2Script, new_workingDir, bwaThreadsValue);
+            List<String> mutect2Command = List.of(mutect2Script, new_workingDir, bwaThreadsValue);
 
-            logWriter.write("Running Sort & Add Groups command: " + mutect2Command);
+            logWriter.write("Running Sort & Add Groups command: " + String.join(" ", mutect2Command));
             logWriter.newLine();
 
-    boolean mutect2Success = runCommand(mutect2Command, new_workingDir, logWriter);
+    boolean mutect2Success = runCommand(mutect2Command, Path.of(new_workingDir), logWriter);
     if (mutect2Success) {
         SwingUtilities.invokeLater(() -> mutect2Check.setEnabled(false));
     }
@@ -1251,13 +1252,12 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
 
 //    String mitImpactFilterFieldValue = (mitImpactFilterField.getText().trim().isEmpty()) 
 //                                       ? mitImpactFilterField.getText().trim() : "30";
-            String mitImpactCommand = String.format("%s %s %s",
-                    mitImpactScript, new_workingDir, bwaThreadsValue);
+            List<String> mitImpactCommand = List.of(mitImpactScript, new_workingDir, bwaThreadsValue);
 
-            logWriter.write("Running mitImpact command: " + mitImpactCommand);
+            logWriter.write("Running mitImpact command: " + String.join(" ", mitImpactCommand));
             logWriter.newLine();
 
-             boolean mitImpactSuccess = runCommand(mitImpactCommand, new_workingDir, logWriter);
+             boolean mitImpactSuccess = runCommand(mitImpactCommand, Path.of(new_workingDir), logWriter);
              if (mitImpactSuccess) {
                  SwingUtilities.invokeLater(() -> mitImpactCheck.setEnabled(false));
              }
@@ -1270,13 +1270,12 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
 
 //    String haplogrepFilterFieldValue = (haplogrepFilterField.getText().trim().isEmpty()) 
 //                                       ? haplogrepFilterField.getText().trim() : "30";
-            String haplogrepCommand = String.format("%s %s %s",
-                    haplogrepScript, new_workingDir, bwaThreadsValue);
+            List<String> haplogrepCommand = List.of(haplogrepScript, new_workingDir, bwaThreadsValue);
 
-            logWriter.write("Running haplogrep command: " + haplogrepCommand);
+            logWriter.write("Running haplogrep command: " + String.join(" ", haplogrepCommand));
             logWriter.newLine();
 
-             boolean haplogrepSuccess = runCommand(haplogrepCommand, new_workingDir, logWriter);
+             boolean haplogrepSuccess = runCommand(haplogrepCommand, Path.of(new_workingDir), logWriter);
              if (haplogrepSuccess) {
                  SwingUtilities.invokeLater(() -> haplogrepCheck.setEnabled(false));
              }
@@ -1289,13 +1288,12 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
 
 //    String fastTreeFilterFieldValue = (fastTreeFilterField.getText().trim().isEmpty()) 
 //                                       ? fastTreeFilterField.getText().trim() : "30";
-            String fastTreeCommand = String.format("%s %s %s",
-                    fastTreeScript, new_workingDir, bwaThreadsValue);
+            List<String> fastTreeCommand = List.of(fastTreeScript, new_workingDir, bwaThreadsValue);
 
-            logWriter.write("Running fastTree command: " + fastTreeCommand);
+            logWriter.write("Running fastTree command: " + String.join(" ", fastTreeCommand));
             logWriter.newLine();
 
-             boolean fastTreeSuccess = runCommand(fastTreeCommand, new_workingDir, logWriter);
+             boolean fastTreeSuccess = runCommand(fastTreeCommand, Path.of(new_workingDir), logWriter);
              if (fastTreeSuccess) {
                  SwingUtilities.invokeLater(() -> fastTreeCheck.setEnabled(false));
              }
@@ -1309,30 +1307,14 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
         }
     }
 
-    private boolean runCommand(String command, String workingDirPath, BufferedWriter logWriter) {
-        boolean success = false;
+    private boolean runCommand(List<String> command, Path workingDirPath, BufferedWriter logWriter) {
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", command);
-            if (workingDirPath != null && !workingDirPath.trim().isEmpty()) {
-                processBuilder.directory(new File(workingDirPath));
-            }
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-                logWriter.write(line);
+            CommandRunner.Result result = new CommandRunner().run(command, workingDirPath, Duration.ofHours(24), logWriter);
+            if (!result.success()) {
+                logWriter.write("Command failed: " + String.join(" ", command));
                 logWriter.newLine();
             }
-
-            process.waitFor();
-            success = (process.exitValue() == 0);
-            if (!success) {
-                logWriter.write("Command failed: " + command);
-                logWriter.newLine();
-            }
+            return result.success();
         } catch (IOException | InterruptedException e) {
             try {
                 logWriter.write("Exception occurred: " + e.getMessage());
@@ -1341,8 +1323,8 @@ if (!gatkMemoryFieldValue.startsWith("-Xmx")) {
                 ioEx.printStackTrace();
             }
             e.printStackTrace();
+            return false;
         }
-        return success;
     }
 
     /**

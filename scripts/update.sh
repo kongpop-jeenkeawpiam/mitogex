@@ -12,10 +12,29 @@ LOCAL_DB_DIR="$1/Software/annovar/humandb"            # Directory containing dat
 TEMP_DB_DIR="$1/Software/annovar/temp_humandb"        # Temporary directory for new database files
 LOG_FILE="$1/update.log"                              # Log file for the update process
 SCRIPTS_DIR="$1/Software/scripts"                     # Directory containing scripts
+APP_SHA256="${MITOGEX_UPDATE_JAR_SHA256:-}"
+SCRIPTS_SHA256="${MITOGEX_UPDATE_SCRIPTS_SHA256:-}"
 
 # Logging function
 log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a $LOG_FILE
+}
+
+verify_checksum() {
+    local file="$1"
+    local expected="$2"
+    local label="$3"
+
+    if [ -z "$expected" ]; then
+        log "Missing checksum for $label. Set MITOGEX_UPDATE_JAR_SHA256 or MITOGEX_UPDATE_SCRIPTS_SHA256 before updating."
+        exit 6
+    fi
+
+    if ! echo "$expected  $file" | sha256sum -c - >/dev/null 2>&1; then
+        log "Checksum verification failed for $label. Refusing to apply update."
+        exit 7
+    fi
+    log "Checksum verified for $label."
 }
 
 # Initialize local versions file if it doesn't exist
@@ -48,6 +67,7 @@ if [ "$LATEST_APP_VERSION" != "$LOCAL_APP_VERSION" ]; then
         log "Failed to download the application update. Exiting."
         exit 2
     fi
+    verify_checksum "$Path_Program/MitoGEx-1.0.jar" "$APP_SHA256" "application update"
 
     log "Stopping the current application..."
     pkill -f "java -jar $APP_NAME"
@@ -90,6 +110,7 @@ if [ "$LATEST_SCRIPTS_VERSION" != "$LOCAL_SCRIPTS_VERSION" ]; then
         log "Failed to download scripts.zip. Exiting."
         exit 4
     fi
+    verify_checksum "$SCRIPTS_DIR/scripts.zip" "$SCRIPTS_SHA256" "scripts update"
 
     log "Unzipping the new scripts..."
     unzip -o "$SCRIPTS_DIR/scripts.zip" -d "$SCRIPTS_DIR/"

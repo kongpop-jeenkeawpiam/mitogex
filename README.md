@@ -116,6 +116,30 @@ Run the GUI:
 source run.sh
 ```
 
+### Developer build and tests
+```bash
+mvn test
+mvn package
+```
+
+The packaged application still uses `MitoGEx-1.0.jar` until the Maven-built artifact is verified for release parity.
+
+### Optional online sharing configuration
+Online sharing no longer stores upload credentials in source code. Set these environment variables before using **Share online...**:
+
+```bash
+export MITOGEX_UPLOAD_URL="https://mitogex.com/upload.php"
+export MITOGEX_UPLOAD_TOKEN="<your upload token>"
+```
+
+Automatic application/script updates are disabled by default. To opt in explicitly:
+
+```bash
+export MITOGEX_ENABLE_AUTO_UPDATE=true
+export MITOGEX_UPDATE_JAR_SHA256="<expected jar sha256>"
+export MITOGEX_UPDATE_SCRIPTS_SHA256="<expected scripts.zip sha256>"
+```
+
 ### Input/Output folders
 These folders are mounted by default and are safe to use:
 - Input FASTQ or BAM → users can select entire directory with GUI application

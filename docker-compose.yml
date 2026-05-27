@@ -41,9 +41,8 @@ services:
     # Network mode for X11 forwarding
     network_mode: host
     
-    # Privileged mode for GUI access (Linux only)
-    # Comment out if not using GUI
-    privileged: true
+    # X11 GUI access should not require privileged mode by default.
+    privileged: false
     
     # Keep container running
     stdin_open: true

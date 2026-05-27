@@ -115,7 +115,7 @@ RUN mkdir -p ${MITOGEX_DIR}/Software/haplogrep3 && \
     unzip -q haplogrep3-3.2.1-linux.zip && \
     rm haplogrep3-3.2.1-linux.zip && \
     ./haplogrep3 trees && \
-    chmod -R 777 trees/
+    chmod -R a+rX trees/
 
 # Install haplocheckCLI
 RUN mkdir -p ${MITOGEX_DIR}/Software/mtdnaserver && \
@@ -147,8 +147,7 @@ COPY hg38_MitImpact313.txt ${MITOGEX_DIR}/Software/annovar/humandb/
 RUN cd ${MITOGEX_DIR} && \
     wget -q https://mitogex.com/scripts2/scripts.zip && \
     unzip -q scripts.zip -d ${MITOGEX_DIR}/Software/ && \
-    rm scripts.zip || \
-    echo "Warning: Scripts download failed"
+    rm scripts.zip
 
 # Disable auto-update (no-op update.sh)
 RUN printf '#!/bin/bash\nexit 1\n' > ${MITOGEX_DIR}/Software/scripts/update.sh && \
@@ -158,8 +157,7 @@ RUN printf '#!/bin/bash\nexit 1\n' > ${MITOGEX_DIR}/Software/scripts/update.sh &
 RUN cd ${MITOGEX_DIR} && \
     wget -q https://mitogex.com/lib.zip && \
     unzip -q lib.zip && \
-    rm lib.zip || \
-    echo "Warning: lib.zip download failed"
+    rm lib.zip
     
 
 # Create directories for volumes
@@ -170,7 +168,7 @@ RUN mkdir -p ${MITOGEX_DIR}/Software/file_log \
              /tmp/runtime-root && \
     touch ${MITOGEX_DIR}/local_versions.txt \
           ${MITOGEX_DIR}/update.log && \
-    chmod -R 777 ${MITOGEX_DIR} \
+    chmod -R u+rwX,g+rwX,o+rX ${MITOGEX_DIR} \
                  /tmp/runtime-root
                  
 # Make scripts executable (don't change other permissions)

@@ -27,8 +27,8 @@ public class MitoGEx {
         
         
         
-     // Trigger the update process
-        boolean updateApplied = runUpdateScript();
+     // Trigger the update process only when explicitly enabled.
+        boolean updateApplied = UpdatePolicy.fromSystemEnvironment().autoUpdateEnabled() && runUpdateScript();
 
         // If an update was applied, exit to allow the application to restart
         if (updateApplied) {
@@ -65,10 +65,9 @@ public class MitoGEx {
 
     // Method to run the update shell script
     private static boolean runUpdateScript() {
-        String workingDir = System.getProperty("user.dir");
-        String new_workingDir = workingDir.replaceAll("target", "");
-        String concat = new_workingDir.concat("/Results/Fasta");
-        String path_Update = new_workingDir.concat("/Software/scripts/./update.sh");
+        RuntimePaths paths = RuntimePaths.fromCurrentWorkingDirectory();
+        String new_workingDir = paths.appRoot().toString();
+        String path_Update = paths.updateScript().toString();
         try {
         // Run the shell script
         String[] updateCommand = {path_Update, new_workingDir};
